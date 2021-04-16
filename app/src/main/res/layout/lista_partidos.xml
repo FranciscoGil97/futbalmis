@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/appbar_layout" />
+
+    <LinearLayout
+        android:id="@+id/partidosLiga"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/colorAlternativo"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/appbar">
+
+        <ImageView
+            android:id="@+id/banderaPaisLigaPartidos"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/paisLigaPartidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/nombreLigaPartidos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listaPartidos"
+        android:layout_width="match_parent"
+        android:layout_height="640dp"
+
+        app:layout_constraintTop_toBottomOf="@id/partidosLiga"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
