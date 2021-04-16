@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBarLigas);
         MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-        Fecha fechaActual = Utils.getFecha(-1);
+        Fecha fechaActual = Utils.getFecha(0);
 
         FT = getSupportFragmentManager().beginTransaction();
         fragmentLigas = new FragmentLigas(this, FT, fechaActual);

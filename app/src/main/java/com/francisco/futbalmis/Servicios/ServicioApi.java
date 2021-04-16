@@ -81,7 +81,7 @@ public class ServicioApi {
                 Log.e("Partidos", partidos.size() + "");
 
                 partidos = new ArrayList<>(response.body());
-
+                MainActivity.cambiaVisibilidadProgressBar(View.GONE);
                 FragmentPartidos.setData(partidos);
             }
 

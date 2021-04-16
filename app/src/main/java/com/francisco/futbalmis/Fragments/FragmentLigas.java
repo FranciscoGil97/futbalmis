@@ -1,6 +1,7 @@
 package com.francisco.futbalmis.Fragments;
 
 import android.content.Context;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Hilos.LigasCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterLigas;
+import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -46,7 +48,6 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
         this.fecha = fecha;
 
         try {
-
             ExecutorService es = Executors.newSingleThreadExecutor();
             Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fecha));
             ligas = result.get();
@@ -80,7 +81,8 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
             @Override
             public void onItemClick(int position, View v) {
 
-                if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
+                if (ligas.size()>0 &&getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
+                    MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
                     FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
                     cargarFragment(fragmentPartidos);
                 }
