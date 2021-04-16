@@ -110,6 +110,7 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.partidosLiga && getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentPartidos) {
+            MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
             FragmentTransaction FT = getActivity().getSupportFragmentManager().beginTransaction();
             FT.add(R.id.ligasFragment, new FragmentClasificacion(context, ligaPartido));
             FT.commit();

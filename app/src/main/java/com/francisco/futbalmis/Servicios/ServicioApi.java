@@ -106,6 +106,7 @@ public class ServicioApi {
             @Override
             public void onResponse(Call<ArrayList<Clasificacion>> call, Response<ArrayList<Clasificacion>> response) {
                 clasificacion = new ArrayList<>(response.body());
+                MainActivity.cambiaVisibilidadProgressBar(View.GONE);
                 FragmentClasificacion.setData(clasificacion);
             }
 

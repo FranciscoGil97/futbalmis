@@ -80,8 +80,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
             }
             @Override
             public void onItemClick(int position, View v) {
-
-                if (ligas.size()>0 &&getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
+                if (listAdapter.getData().get(position).getId()>0 && getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
                     MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
                     FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
                     cargarFragment(fragmentPartidos);
