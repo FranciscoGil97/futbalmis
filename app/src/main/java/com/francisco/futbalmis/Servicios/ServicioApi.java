@@ -51,7 +51,7 @@ public class ServicioApi {
                     Liga liga= new Liga();
                     liga.setId(-1);
                     ligas.add(liga);
-                    FragmentLigas.setData(ligas,ligas.size()+1);
+                    FragmentLigas.setData(ligas);
                 }
                 MainActivity.cambiaVisibilidadProgressBar(View.GONE);
             }
@@ -62,18 +62,6 @@ public class ServicioApi {
             }
         });
         return ligas;
-    }
-
-    public static Integer getNumeroPartidos(String fecha) throws IOException {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URLBase)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        IServicioApi servicio = retrofit.create(IServicioApi.class);
-
-        Call<Integer> numeroPartidos = servicio.getNumeroPartidos(fecha);
-
-        return numeroPartidos.execute().body();
     }
 
     public static ArrayList<Partido> getPartidosFechaLiga(Fecha fecha, int idLiga) {
