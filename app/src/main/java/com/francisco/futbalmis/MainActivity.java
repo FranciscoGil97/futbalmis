@@ -38,27 +38,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressBar=findViewById(R.id.progressBarLigas);
+        progressBar = findViewById(R.id.progressBarLigas);
         MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-        try {
-            Fecha fechaActual = Utils.getFecha(0);
-            ExecutorService servicio = Executors.newSingleThreadExecutor();
-            Future<Integer> resultado = servicio.submit(new NumeroPartidoCallable(fechaActual.toString()));
-            int numeroPartidos = resultado.get();
-            System.out.println("Numero partido: " + numeroPartidos);
-            numeroPartidos+=1;
-            FT = getSupportFragmentManager().beginTransaction();
-            fragmentLigas = new FragmentLigas(this, FT, fechaActual, numeroPartidos);
-            cargarFragment(fragmentLigas);
+//        try {
+        Fecha fechaActual = Utils.getFecha(0);
+//            ExecutorService servicio = Executors.newSingleThreadExecutor();
+//            Future<Integer> resultado = servicio.submit(new NumeroPartidoCallable(fechaActual.toString()));
+//            int numeroPartidos = resultado.get();
+//            System.out.println("Numero partido: " + numeroPartidos);
+//            numeroPartidos+=1;
+        FT = getSupportFragmentManager().beginTransaction();
+        fragmentLigas = new FragmentLigas(this, FT, fechaActual);
+        cargarFragment(fragmentLigas);
 
 
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            System.out.println("ERROR numero partidos");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.out.println("ERROR numero partidos");
-        }
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//            System.out.println("ERROR numero partidos");
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//            System.out.println("ERROR numero partidos");
+//        }
 
 
 //        Lanzar hilo de actualizacion de partidos
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         FT.commit();
     }
 
-    public static void cambiaVisibilidadProgressBar(int visibility){
-            progressBar.setVisibility(visibility);
+    public static void cambiaVisibilidadProgressBar(int visibility) {
+        progressBar.setVisibility(visibility);
     }
 }

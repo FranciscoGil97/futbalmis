@@ -26,12 +26,19 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
     private Context context;
     private onClickListnerMiInterfaz onclicklistner;
     private int itemSelected;
-    private int numeroPartidos;
+    private Integer numeroPartidos;
     ViewGroup viewGroup;
-    ProgressBar progressBar;
 
     public ListAdapterLigas(ArrayList<Liga> itemList, Context context, int numeroPartidos) {
         this.numeroPartidos = numeroPartidos;
+        this.mInflater = LayoutInflater.from(context);
+        this.context = context;
+        this.mData = itemList;
+        itemSelected = 0;
+    }
+
+    public ListAdapterLigas(ArrayList<Liga> itemList, Context context) {
+        this.numeroPartidos = null;
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;
@@ -48,9 +55,14 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
         mData = ligas;
     }
 
+    public void setData(List<Liga> ligas) {
+        this.numeroPartidos = null;
+        mData = ligas;
+    }
+
     @Override
     public int getItemViewType(int position) {
-        if (mData.get(0).getId() == -1) return R.layout.no_partidos_dia;
+        if (mData.size()>0 && mData.get(0).getId() == -1) return R.layout.no_partidos_dia;
         else return R.layout.cardview_liga;
     }
 
@@ -61,7 +73,6 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
         View view = null;
         viewGroup = parent;
         view = mInflater.inflate(getItemViewType(0), parent, false);
-        progressBar=view.findViewById(R.id.progressBarLigas);
         System.out.println("List adapter ligas");
         return new Holder(view);
     }
@@ -85,14 +96,6 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
         return mData;
     }
 
-    public int getItemSelected() {
-        return itemSelected;
-    }
-
-    public void setItemSelected(int itemSelected) {
-        this.itemSelected = itemSelected;
-    }
-
     public class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
         TextView pais, nombre, noPartidos;
         View view;
@@ -102,7 +105,7 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
             super(itemView);
             view = itemView;
 
-            if (numeroPartidos > 1) {
+            if (numeroPartidos == null ) {
                 nombre = itemView.findViewById(R.id.nombreLiga);
                 pais = itemView.findViewById(R.id.paisLiga);
                 bandera = itemView.findViewById(R.id.banderaPaisLiga);
@@ -114,7 +117,7 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
         }
 
         void bindData(final Liga item, int i) {
-            if (numeroPartidos > 1) {
+            if (numeroPartidos== null ) {
                 nombre.setText(item.getNombre());
                 pais.setText(item.getPais() + ":");
                 Utils.fetchSvg(context, item.getBanderaURL(), bandera);

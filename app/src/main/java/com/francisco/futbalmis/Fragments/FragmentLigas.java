@@ -39,7 +39,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickListener {
-    private static int numeroPartidos;
+    private static Integer numeroPartidos;
     private View view;
     private Context context;
     private RecyclerView recyclerView;
@@ -49,7 +49,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
     private FragmentTransaction FT;
     MaterialToolbar appBar;
 
-    public FragmentLigas(Context context, FragmentTransaction FT, Fecha fecha, int numeroPartidos) {
+    public FragmentLigas(Context context, FragmentTransaction FT, Fecha fecha, Integer numeroPartidos) {
         this.numeroPartidos = numeroPartidos;
         this.context = context;
         this.FT = FT;
@@ -74,6 +74,37 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
         }
     }
 
+    public FragmentLigas(Context context, FragmentTransaction FT, Fecha fecha) {
+        this.numeroPartidos = null;
+        this.context = context;
+        this.FT = FT;
+        this.fecha = fecha;
+
+        try {
+
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fecha));
+            ligas = result.get();
+            listAdapter = new ListAdapterLigas(ligas, context);
+
+//            if (numeroPartidos!=null && numeroPartidos > 1){
+//                ExecutorService es = Executors.newSingleThreadExecutor();
+//                Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fecha));
+//                ligas = result.get();
+//                listAdapter = new ListAdapterLigas(ligas, context);
+//            }else{
+//                ligas = new ArrayList<>();
+//                Liga liga=new Liga();
+//                liga.setId(-1);
+//                ligas.add(liga);
+//                listAdapter = new ListAdapterLigas(ligas, context,1);
+//            }
+//            System.out.println("Fragment ligas listAdapter="+listAdapter==null);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -92,13 +123,13 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
             public void onItemLongClick(int position, View v) {
                 //menu contextual mostrando....
                 if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
-                    Toast.makeText(context, listAdapter.getData().get(listAdapter.getItemSelected()).getId() + "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, listAdapter.getData().get(position).getId() + "", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onItemClick(int position, View v) {
-                //se motraría los partidos del dia seleccionado
+
                 if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
                     FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
                     cargarFragment(fragmentPartidos);
@@ -116,7 +147,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
     }
 
     public static void setData(ArrayList<Liga> ligas) {
-        listAdapter.setData(ligas,numeroPartidos);
+        listAdapter.setData(ligas);
         listAdapter.notifyDataSetChanged();
     }
 

@@ -25,7 +25,7 @@ import okhttp3.Response;
 
 public class Utils {
     private static OkHttpClient httpClient;
-    public static final int DIASSEMANA=7;
+    public static final int DIAS_SEMANA=7;
     // this method is used to fetch svg and load it into target imageview.
     public static void fetchSvg(Context context, String url, final ImageView target) {
         if (httpClient == null) {

@@ -83,32 +83,32 @@ public class FragmentDialogoFecha extends DialogFragment {
                 try {
                     vuelveALigas();
                     MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-                    Fecha fechaDiaSeleccionado = Utils.getFecha(position - Utils.DIASSEMANA);
+                    Fecha fechaDiaSeleccionado = Utils.getFecha(position - Utils.DIAS_SEMANA);
 
-                    ExecutorService servicio = Executors.newSingleThreadExecutor();
-                    Future<Integer> resultado = servicio.submit(new NumeroPartidoCallable(fechaDiaSeleccionado.toString()));
-                    int numeroPartidos = resultado.get();
+//                    ExecutorService servicio = Executors.newSingleThreadExecutor();
+//                    Future<Integer> resultado = servicio.submit(new NumeroPartidoCallable(fechaDiaSeleccionado.toString()));
+//                    int numeroPartidos = resultado.get();
 
 
                     FragmentLigas.setFecha(fechaDiaSeleccionado);
                     FragmentLigas.setData(new ArrayList<>());
-                    numeroPartidos+=1;
-                    System.out.println("Dialogo numero partidos"+numeroPartidos);
-                    if(numeroPartidos<=1){
-                        ArrayList<Liga> ligas=new ArrayList<>();
-                        Liga liga=new Liga();
-                        liga.setId(-1);
-                        ligas.add(liga);
-                        FragmentLigas.setFecha(fechaDiaSeleccionado);
-                        FragmentLigas.setData(ligas, numeroPartidos);
-
-                    }
-
-                    if (numeroPartidos > 1) {
+//                    numeroPartidos+=1;
+//                    System.out.println("Dialogo numero partidos"+numeroPartidos);
+//                    if(numeroPartidos<=1){
+//                        ArrayList<Liga> ligas=new ArrayList<>();
+//                        Liga liga=new Liga();
+//                        liga.setId(-1);
+//                        ligas.add(liga);
+//                        FragmentLigas.setFecha(fechaDiaSeleccionado);
+//                        FragmentLigas.setData(ligas, numeroPartidos);
+//
+//                    }
+//
+//                    if (numeroPartidos > 1) {
                         ExecutorService es = Executors.newSingleThreadExecutor();
                         Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fechaDiaSeleccionado));
                         result.get();
-                    }
+//                    }
 
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
