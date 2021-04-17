@@ -34,42 +34,29 @@ public class MainActivity extends AppCompatActivity {
 
 //        Lanzar hilo de actualizacion de partidos
 
-//        Thread actualizaPartidos = new Thread(new ActualizaLigasRunnable());
-//        actualizaPartidos.setDaemon(true);
-//        actualizaPartidos.start();
+        Thread actualizaPartidos = new Thread(new ActualizaLigasRunnable());
+        actualizaPartidos.setDaemon(true);
+        actualizaPartidos.start();
 
     }
 
     @Override
     public void onBackPressed() {
-        if (!(getSupportFragmentManager().findFragmentById(R.id.ligasFragment) instanceof FragmentLigas)) {
-            Log.e("Numero de fragment", getSupportFragmentManager().getFragments().size() + "");
-            if ((getSupportFragmentManager().findFragmentById(R.id.ligasFragment) instanceof FragmentPartidos)) {
-                FT = getSupportFragmentManager().beginTransaction();
-                FT.remove(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1))
-                        .commit();
-                getSupportFragmentManager().popBackStack();
-                if (!((getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 2)) instanceof FragmentLigas)) {
-                    FT = getSupportFragmentManager().beginTransaction();
-                    FT.remove(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 2))
-                            .commit();
-                    getSupportFragmentManager().popBackStack();
-
-                }
-            } else {
-                FT = getSupportFragmentManager().beginTransaction();
-                FT.remove(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1))
-                        .commit();
-                getSupportFragmentManager().popBackStack();
-            }
+        if (!(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas)) {
+            desapilaFragment();
         } else finish();
     }
 
     private void cargarFragment(Fragment f) {
         FT = getSupportFragmentManager().beginTransaction();
         FT.add(R.id.ligasFragment, f, "fragmentLigas");
-
         FT.commit();
+    }
+
+    private void desapilaFragment() {
+        FT = getSupportFragmentManager().beginTransaction();
+        FT.remove(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1)).commit();
+        getSupportFragmentManager().popBackStack();
     }
 
     public static void cambiaVisibilidadProgressBar(int visibility) {

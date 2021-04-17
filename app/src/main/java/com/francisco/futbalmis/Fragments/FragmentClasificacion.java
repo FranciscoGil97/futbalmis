@@ -2,6 +2,7 @@ package com.francisco.futbalmis.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +21,7 @@ import com.francisco.futbalmis.Clases.Clasificacion;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Hilos.ClasificacionCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterClasificacion;
+import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
 import com.francisco.futbalmis.Servicios.Utils;
 
@@ -37,8 +40,10 @@ public class FragmentClasificacion extends Fragment {
     private Liga ligaPartidos;
     TextView nombreLiga, paisLiga;
     public ImageView banderaPaisLiga;
+    FragmentTransaction FT;
 
-    public FragmentClasificacion(Context context, Liga ligaPartidos) {
+    public FragmentClasificacion(Context context, Liga ligaPartidos, FragmentTransaction FT) {
+        this.FT = FT;
         this.context = context;
         this.ligaPartidos = new Liga(ligaPartidos.getId(), ligaPartidos.getNombre(), ligaPartidos.getCodigoPais(), ligaPartidos.getPais(), ligaPartidos.getBanderaURL());
         ExecutorService es = Executors.newSingleThreadExecutor();
@@ -91,17 +96,18 @@ public class FragmentClasificacion extends Fragment {
             listAdapter.setOnItemClickListener(new ListAdapterClasificacion.onClickListnerMiInterfaz() {
                 @Override
                 public void onItemLongClick(int position, View v) {
-                    //menu contextual mostrando....
-                    if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentClasificacion)
-                        Toast.makeText(context, listAdapter.getData().get(listAdapter.getItemSelected()).getPuntos() + "", Toast.LENGTH_SHORT).show();
 
                 }
 
                 @Override
                 public void onItemClick(int position, View v) {
-                    //se motraría los clasificacion del dia seleccionado
+                    //Mostrar partidos de un equipo
                     if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentClasificacion)
                         Toast.makeText(context, listAdapter.getData().get(position).getEquipo().getNombre() + "", Toast.LENGTH_SHORT).show();
+
+
+                    MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
+                    cargarFragment(new FragmentPartidosEquipo(context, listAdapter.getData().get(position).getEquipo()));
                 }
             });
         }
@@ -112,4 +118,13 @@ public class FragmentClasificacion extends Fragment {
         listAdapter.setData(clasificacion);
         listAdapter.notifyDataSetChanged();
     }
+
+    private void cargarFragment(Fragment f) {
+        FT = getActivity().getSupportFragmentManager().beginTransaction();
+        FT.add(R.id.ligasFragment, f);
+        FT.commit();
+        Log.e("Numero de fragment", getActivity().getSupportFragmentManager().getFragments().size() + "");
+        FT = null;
+    }
+
 }

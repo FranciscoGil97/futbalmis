@@ -1,5 +1,11 @@
 package com.francisco.futbalmis.Clases;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.francisco.futbalmis.Servicios.Utils;
+
 public class Fecha {
     private String dia;
     private String mes;
@@ -13,10 +19,12 @@ public class Fecha {
         this.diaSemana = diaSemana;
     }
 
-    public Fecha(String dia, String mes, String diaSemana) {
-        this.dia = dia;
-        this.mes = mes;
-        this.diaSemana = diaSemana;
+    public Fecha(String fechaString){
+        Fecha fecha= Utils.getParseFecha(fechaString);
+        dia = fecha.getDia();
+        mes = fecha.getMes();
+        anyo = fecha.getAnyo();
+        diaSemana = fecha.getDiaSemana();
     }
 
     public Fecha(Fecha fecha){
@@ -58,8 +66,19 @@ public class Fecha {
         this.diaSemana = diaSemana;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return anyo+"-"+mes+"-"+dia;
+    }
+
+    public String fechaPartido(){
+        try {
+
+        return dia+"/"+mes+"/"+(Integer.parseInt(anyo)%1000);
+        }catch (Exception ex){
+            Log.e("ERROR",ex.getMessage());
+        }
+        return "MAL";
     }
 }

@@ -3,6 +3,8 @@ package com.francisco.futbalmis.Servicios;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.francisco.futbalmis.Clases.Clasificacion;
 import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
@@ -10,6 +12,7 @@ import com.francisco.futbalmis.Clases.Partido;
 import com.francisco.futbalmis.Fragments.FragmentClasificacion;
 import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
+import com.francisco.futbalmis.Fragments.FragmentPartidosEquipo;
 import com.francisco.futbalmis.MainActivity;
 
 import java.io.IOException;
@@ -42,13 +45,13 @@ public class ServicioApi {
 
         _ligas.enqueue(new Callback<ArrayList<Liga>>() {
             @Override
-            public void onResponse(Call<ArrayList<Liga>> call, Response<ArrayList<Liga>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Liga>> call,@NonNull Response<ArrayList<Liga>> response) {
                 ligas = new ArrayList<>(response.body());
 
-                if(ligas.size()>0)
+                if (ligas.size() > 0)
                     FragmentLigas.setData(ligas);
-                else{
-                    Liga liga= new Liga();
+                else {
+                    Liga liga = new Liga();
                     liga.setId(-1);
                     ligas.add(liga);
                     FragmentLigas.setData(ligas);
@@ -57,7 +60,7 @@ public class ServicioApi {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Liga>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Liga>> call,@NonNull Throwable t) {
                 Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
             }
         });
@@ -75,7 +78,7 @@ public class ServicioApi {
 
         _partidos.enqueue(new Callback<ArrayList<Partido>>() {
             @Override
-            public void onResponse(Call<ArrayList<Partido>> call, Response<ArrayList<Partido>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Partido>> call,@NonNull Response<ArrayList<Partido>> response) {
                 partidos = new ArrayList<>(response.body());
                 Log.e("CODE", response.code() + "");
                 Log.e("Partidos", partidos.size() + "");
@@ -86,7 +89,7 @@ public class ServicioApi {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Partido>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Partido>> call,@NonNull Throwable t) {
                 Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
             }
         });
@@ -104,21 +107,50 @@ public class ServicioApi {
 
         _clasificacion.enqueue(new Callback<ArrayList<Clasificacion>>() {
             @Override
-            public void onResponse(Call<ArrayList<Clasificacion>> call, Response<ArrayList<Clasificacion>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Clasificacion>> call, @NonNull Response<ArrayList<Clasificacion>> response) {
                 clasificacion = new ArrayList<>(response.body());
                 MainActivity.cambiaVisibilidadProgressBar(View.GONE);
                 FragmentClasificacion.setData(clasificacion);
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Clasificacion>> call, Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Clasificacion>> call, @NonNull Throwable t) {
                 Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
             }
         });
         return clasificacion;
     }
 
-    public static String _mensaje = "";
+    public static ArrayList<Partido> getPartidosEquipo(int idEquipo) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URLBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        IServicioApi servicio = retrofit.create(IServicioApi.class);
+
+        Call<ArrayList<Partido>> _partidos = servicio.getPartidosEquipo(idEquipo);
+
+        _partidos.enqueue(new Callback<ArrayList<Partido>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<Partido>> call,@NonNull Response<ArrayList<Partido>> response) {
+                partidos = new ArrayList<>(response.body());
+                Log.e("CODE", response.code() + "");
+                Log.e("Partidos", partidos.size() + "");
+
+                partidos = new ArrayList<>(response.body());
+                MainActivity.cambiaVisibilidadProgressBar(View.GONE);
+                FragmentPartidosEquipo.setData(partidos);
+                System.out.println("Partidos obtenidos equipo"+partidos.size());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<Partido>> call,@NonNull Throwable t) {
+                Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
+            }
+        });
+        return partidos;
+    }
+
 
     public static void actualizaPartidosHoy() {
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -138,7 +170,7 @@ public class ServicioApi {
 
         mensaje.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.e("Partidos actualizados HOY", "Partidos hoy actualizados");
                 } else
@@ -146,7 +178,7 @@ public class ServicioApi {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Log.e("ERROR ACTUALIZAR PARTIDOS HOY: ", t.getMessage());
             }
         });
@@ -170,7 +202,7 @@ public class ServicioApi {
 
         mensaje.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.e("Partidos actualizados", "Partidos actualizados");
                 } else
@@ -178,10 +210,12 @@ public class ServicioApi {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Log.e("ERROR ACTUALIZAR PARTIDOS: ", t.getMessage());
             }
         });
     }
+
+
 
 }

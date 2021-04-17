@@ -13,6 +13,7 @@ import com.francisco.futbalmis.R;
 import com.pixplicity.sharp.Sharp;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -87,6 +88,24 @@ public class Utils {
         String anyo=calendar.get(Calendar.YEAR)+"";
         Fecha fecha = new Fecha(dia, mes, anyo, diaSemana);
         return fecha;
+
+    }
+
+    public static Fecha getParseFecha(String fechaString) {
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = formatoFecha.parse(fechaString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String dia = addCeroDigitoFecha(calendar.get(Calendar.DAY_OF_MONTH));
+        String mes = addCeroDigitoFecha(calendar.get(Calendar.MONTH)+1);
+        String diaSemana = getDiaSemana(calendar.get(Calendar.DAY_OF_WEEK));
+        String anyo=calendar.get(Calendar.YEAR)+"";
+        return new Fecha(dia, mes, anyo, diaSemana);
 
     }
 

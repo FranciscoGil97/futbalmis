@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Clases.Partido;
 import com.francisco.futbalmis.R;
@@ -23,13 +25,18 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
     private LayoutInflater mInflater;
     private Context context;
     private onClickListnerMiInterfaz onclicklistner;
-    private int itemSelected;
+    private boolean sonPartidosUnSoloEquipo=false;
 
     public ListAdapterPartidos(ArrayList<Partido> itemList, Context context) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;
-        itemSelected = 0;
+    }
+    public ListAdapterPartidos(ArrayList<Partido> itemList, Context context,boolean sonPartidosUnSoloEquipo) {
+        this.mInflater = LayoutInflater.from(context);
+        this.context = context;
+        this.mData = itemList;
+        this.sonPartidosUnSoloEquipo=sonPartidosUnSoloEquipo;
     }
 
     @Override
@@ -41,8 +48,9 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
         mData = new ArrayList<>(partidos);
     }
 
+    @NonNull
     @Override
-    public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.cardview_partidos, parent, false);
 
         return new Holder(view);
@@ -64,14 +72,6 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
 
     public List<Partido> getData() {return mData; }
 
-    public int getItemSelected() {
-        return itemSelected;
-    }
-
-    public void setItemSelected(int itemSelected) {
-        this.itemSelected = itemSelected;
-    }
-
     public class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
         View view;
         TextView nombreEquipoLocal, nombreEquipoVisitante, estadoPartido, resultadoEquipoLocal, resultadoEquipoVisitante,horaPartido;
@@ -82,10 +82,10 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
             view = itemView;
             nombreEquipoLocal = itemView.findViewById(R.id.nombreEquipoLocal);
             nombreEquipoVisitante = itemView.findViewById(R.id.nombreEquipoVisitante);
-            estadoPartido = itemView.findViewById(R.id.estadoPartido);
             resultadoEquipoLocal = itemView.findViewById(R.id.resultadoEquipoLocal);
             resultadoEquipoVisitante = itemView.findViewById(R.id.resultadoEquipoVisitante);
             horaPartido=itemView.findViewById(R.id.horaPartido);
+            estadoPartido = itemView.findViewById(R.id.estadoPartido);
 
             escudoEquipoLocal = itemView.findViewById(R.id.escudoEquipoLocal);
             escudoEquipoVisitante = itemView.findViewById(R.id.escudoEquipoVisitante);
@@ -96,9 +96,19 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
         public void bindData(final Partido item, int i) {
             nombreEquipoLocal.setText(item.getEquipoLocal().getNombre());
             nombreEquipoVisitante.setText(item.getEquipoVisitante().getNombre());
-            estadoPartido.setText(item.getEstadoPartido());
+            if(!sonPartidosUnSoloEquipo){
+                estadoPartido.setText(item.getEstadoPartido());
+            }
+            else{
+                Fecha fechaPartido=new Fecha(item.getFechaPartido());
+                horaPartido.setText(fechaPartido.fechaPartido());
+            }
+
             if(item.getResultadoEquipoLocal().equals("null")){
-                horaPartido.setText(item.getHoraPartido().substring(0,5));
+                if(!sonPartidosUnSoloEquipo)
+                    horaPartido.setText(item.getHoraPartido().substring(0,5));
+                resultadoEquipoLocal.setText("");
+                resultadoEquipoVisitante.setText("");
             }else{
                 resultadoEquipoLocal.setText(item.getResultadoEquipoLocal());
                 resultadoEquipoVisitante.setText(item.getResultadoEquipoVisitate());
@@ -111,13 +121,11 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
         @Override
         public void onClick(View v) {
             onclicklistner.onItemClick(getAdapterPosition(), v);
-            itemSelected = getAdapterPosition();
         }
 
         @Override
         public boolean onLongClick(View v) {
             onclicklistner.onItemLongClick(getAdapterPosition(), v);
-            itemSelected = getAdapterPosition();
             return true;
         }
     }
