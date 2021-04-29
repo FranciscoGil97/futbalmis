@@ -11,11 +11,13 @@ import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
 import com.pixplicity.sharp.Sharp;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.Call;
@@ -26,7 +28,8 @@ import okhttp3.Response;
 
 public class Utils {
     private static OkHttpClient httpClient;
-    public static final int DIAS_SEMANA=7;
+    public static final int DIAS_SEMANA = 7;
+
     // this method is used to fetch svg and load it into target imageview.
     public static void fetchSvg(Context context, String url, final ImageView target) {
         if (httpClient == null) {
@@ -77,18 +80,15 @@ public class Utils {
     }
 
     public static Fecha getFecha(int intervaloDias) {
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DATE, intervaloDias);
         String dia = addCeroDigitoFecha(calendar.get(Calendar.DAY_OF_MONTH));
-        String mes = addCeroDigitoFecha(calendar.get(Calendar.MONTH)+1);
+        String mes = addCeroDigitoFecha(calendar.get(Calendar.MONTH) + 1);
         String diaSemana = getDiaSemana(calendar.get(Calendar.DAY_OF_WEEK));
-        String anyo=calendar.get(Calendar.YEAR)+"";
-        Fecha fecha = new Fecha(dia, mes, anyo, diaSemana);
-        return fecha;
-
+        String anyo = calendar.get(Calendar.YEAR) + "";
+        return new Fecha(dia, mes, anyo, diaSemana);
     }
 
     public static Fecha getParseFecha(String fechaString) {
@@ -102,15 +102,42 @@ public class Utils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         String dia = addCeroDigitoFecha(calendar.get(Calendar.DAY_OF_MONTH));
-        String mes = addCeroDigitoFecha(calendar.get(Calendar.MONTH)+1);
+        String mes = addCeroDigitoFecha(calendar.get(Calendar.MONTH) + 1);
         String diaSemana = getDiaSemana(calendar.get(Calendar.DAY_OF_WEEK));
-        String anyo=calendar.get(Calendar.YEAR)+"";
+        String anyo = calendar.get(Calendar.YEAR) + "";
         return new Fecha(dia, mes, anyo, diaSemana);
 
     }
 
     private static String addCeroDigitoFecha(int fecha) {
         return (fecha < 10 ? "0" + fecha : "" + fecha);
+    }
+
+    public static Date parseDate(String fechaHora) {
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = formatoFecha.parse(fechaHora);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public static String getMinutos(Date fechPartido) {
+        String minutos = "";
+        Date fechaActual = new Date();
+        int tiempoDescanso = 15; //parece que en algunas ligas es de 20 minutos(italia, portugal y...)
+
+        long diferenciaMinutos = TimeUnit.MILLISECONDS.toMinutes(fechaActual.getTime() - fechPartido.getTime());
+        minutos = diferenciaMinutos + "";
+        if (diferenciaMinutos > 45 && diferenciaMinutos < 48)
+            minutos = "45+" + (diferenciaMinutos - 45) + "'";
+        if (diferenciaMinutos >= 60)
+            minutos = (diferenciaMinutos - tiempoDescanso) + "'";
+        if (diferenciaMinutos > 90)
+            minutos = "90+" + (diferenciaMinutos - 90 - tiempoDescanso) + "'";
+        return minutos;
     }
 
 

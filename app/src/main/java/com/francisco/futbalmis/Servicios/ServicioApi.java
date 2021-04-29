@@ -173,6 +173,7 @@ public class ServicioApi {
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     Log.e("Partidos actualizados HOY", "Partidos hoy actualizados");
+                    MainActivity.cambiaVisibilidadSwipeRefresh();
                 } else
                     Log.e("Partidos actualizados HOY", "Algo ha pasado " + response.code());
             }

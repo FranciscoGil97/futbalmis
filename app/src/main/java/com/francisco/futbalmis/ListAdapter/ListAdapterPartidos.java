@@ -1,6 +1,7 @@
 package com.francisco.futbalmis.ListAdapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +98,10 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
             nombreEquipoLocal.setText(item.getEquipoLocal().getNombre());
             nombreEquipoVisitante.setText(item.getEquipoVisitante().getNombre());
             if(!sonPartidosUnSoloEquipo){
-                estadoPartido.setText(item.getEstadoPartido());
+                if(item.getEstadoPartido().equals("JUGANDO")) {
+                    estadoPartido.setText(Utils.getMinutos(Utils.parseDate(item.getFechaPartido()+" "+item.getHoraPartido())));
+                }
+                else estadoPartido.setText(item.getEstadoPartido());
             }
             else{
                 Fecha fechaPartido=new Fecha(item.getFechaPartido());
@@ -112,6 +116,11 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
             }else{
                 resultadoEquipoLocal.setText(item.getResultadoEquipoLocal());
                 resultadoEquipoVisitante.setText(item.getResultadoEquipoVisitate());
+                if(item.getEstadoPartido().equals("JUGANDO") ||item.getEstadoPartido().equals("DESCANSO")){
+                    estadoPartido.setTextColor(Color.RED);
+                    resultadoEquipoLocal.setTextColor(Color.RED);
+                    resultadoEquipoVisitante.setTextColor(Color.RED);
+                }
             }
 
             Utils.fetchSvg(context, item.getEquipoLocal().getURLEscudo(), escudoEquipoLocal);
