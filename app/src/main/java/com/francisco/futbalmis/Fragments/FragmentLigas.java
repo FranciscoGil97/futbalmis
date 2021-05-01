@@ -84,6 +84,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
                     MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
                     FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
                     cargarFragment(fragmentPartidos);
+                    MainActivity.cambiaVisibilidadTabLayout(View.GONE);
                 }
             }
         });
