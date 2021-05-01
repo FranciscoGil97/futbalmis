@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private static ProgressBar progressBar;
     private Date fechaUltimaActualizacion = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
