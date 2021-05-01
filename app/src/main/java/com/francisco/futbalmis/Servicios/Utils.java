@@ -130,7 +130,7 @@ public class Utils {
         int tiempoDescanso = 15; //parece que en algunas ligas es de 20 minutos(italia, portugal y...)
 
         long diferenciaMinutos = TimeUnit.MILLISECONDS.toMinutes(fechaActual.getTime() - fechPartido.getTime());
-        minutos = diferenciaMinutos + "";
+        minutos = diferenciaMinutos + "'";
         if (diferenciaMinutos > 45 && diferenciaMinutos < 48)
             minutos = "45+" + (diferenciaMinutos - 45) + "'";
         if (diferenciaMinutos >= 60)

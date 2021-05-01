@@ -19,15 +19,15 @@ public class Fecha {
         this.diaSemana = diaSemana;
     }
 
-    public Fecha(String fechaString){
-        Fecha fecha= Utils.getParseFecha(fechaString);
+    public Fecha(String fechaString) {
+        Fecha fecha = Utils.getParseFecha(fechaString);
         dia = fecha.getDia();
         mes = fecha.getMes();
         anyo = fecha.getAnyo();
         diaSemana = fecha.getDiaSemana();
     }
 
-    public Fecha(Fecha fecha){
+    public Fecha(Fecha fecha) {
         dia = fecha.getDia();
         mes = fecha.getMes();
         anyo = fecha.getAnyo();
@@ -69,15 +69,14 @@ public class Fecha {
     @NonNull
     @Override
     public String toString() {
-        return anyo+"-"+mes+"-"+dia;
+        return anyo + "-" + mes + "-" + dia;
     }
 
-    public String fechaPartido(){
+    public String fechaPartido() {
         try {
-
-        return dia+"/"+mes+"/"+(Integer.parseInt(anyo)%1000);
-        }catch (Exception ex){
-            Log.e("ERROR",ex.getMessage());
+            return dia + "/" + mes + "/" + (Integer.parseInt(anyo) % 1000);
+        } catch (Exception ex) {
+            Log.e("ERROR", ex.getMessage());
         }
         return "MAL";
     }

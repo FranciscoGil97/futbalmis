@@ -12,8 +12,8 @@ public class ActualizaLigasRunnable implements Runnable {
         ServicioApi.actualizaPartidos();
         while (true) {
             try {
-                Thread.sleep(150000);//2.5 minutos
                 ServicioApi.actualizaPartidosHoy();
+                Thread.sleep(150000);//2.5 minutos
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
