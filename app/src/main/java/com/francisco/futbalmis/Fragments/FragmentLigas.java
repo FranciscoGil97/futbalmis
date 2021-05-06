@@ -111,7 +111,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context);
+        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context,fecha);
         fragmentDialogoFecha.show(getActivity().getSupportFragmentManager(), "FragmentDialogoFechaLigas");
 
         return false;

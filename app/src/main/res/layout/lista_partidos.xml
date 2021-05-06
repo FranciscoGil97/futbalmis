@@ -13,7 +13,7 @@
         android:id="@+id/partidosLiga"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="@color/colorAlternativo"
+        android:background="@color/colorSecundario"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/appbar">
 

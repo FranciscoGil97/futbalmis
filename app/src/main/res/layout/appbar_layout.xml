@@ -22,7 +22,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:title="@string/app_name"
-            android:background="@color/colorFondo"
+            android:background="@color/primary"
             app:menu="@menu/menu_appbar">
 
         </com.google.android.material.appbar.MaterialToolbar>

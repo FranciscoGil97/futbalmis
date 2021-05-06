@@ -1,13 +1,16 @@
 package com.francisco.futbalmis.ListAdapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.francisco.futbalmis.Clases.Fecha;
@@ -22,12 +25,14 @@ public class ListAdapterDias extends RecyclerView.Adapter<ListAdapterDias.Holder
     private Context context;
     private onClickListnerMiInterfaz onclicklistner;
     private int itemSelected;
+    Fecha fechaDiaSeleccionado;
 
-    public ListAdapterDias(ArrayList<Fecha> itemList, Context context) {
+    public ListAdapterDias(ArrayList<Fecha> itemList, Context context,Fecha fechaDiaSeleccionado) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;
-        itemSelected = 0;
+        this.itemSelected = itemSelected;
+        this.fechaDiaSeleccionado=fechaDiaSeleccionado;
     }
 
     @Override
@@ -52,7 +57,6 @@ public class ListAdapterDias extends RecyclerView.Adapter<ListAdapterDias.Holder
     }
 
     public interface onClickListnerMiInterfaz {
-        void onItemLongClick(int position, View v);
 
         void onItemClick(int position, View v);
     }
@@ -61,37 +65,30 @@ public class ListAdapterDias extends RecyclerView.Adapter<ListAdapterDias.Holder
         this.onclicklistner = onclicklistner;
     }
 
-    public List<Fecha> getData() {
-        return mData;
-    }
-
-    public int getItemSelected() {
-        return itemSelected;
-    }
-
-    public void setItemSelected(int itemSelected) {
-        this.itemSelected = itemSelected;
-    }
-
-    public class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView diaMes, diaSemana;
         View view;
+        LinearLayout contenedor;
 
         Holder(View itemView) {
             super(itemView);
             view = itemView;
+            contenedor = view.findViewById(R.id.contenedorDatosDiaDialogo);
             diaMes = itemView.findViewById(R.id.diaMesDialogo);
             diaSemana = itemView.findViewById(R.id.diaSemanaDialogo);
 
-            itemView.setOnLongClickListener(this);
             itemView.setOnClickListener(this);
         }
 
         void bindData(final Fecha item, int i) {
-            if (!item.getDiaSemana().equals("HOY")) {
+            if (item.getDiaSemana().equals("HOY")) {
+                diaSemana.setText(item.getDiaSemana());
+            } else{
                 diaMes.setText(item.getDia() + "/" + item.getMes());
                 diaSemana.setText(item.getDiaSemana());
-            } else diaSemana.setText(item.getDiaSemana());
+            }
+            if(item.equals(fechaDiaSeleccionado))
+                contenedor.setBackgroundColor(ContextCompat.getColor(context, R.color.primary));
         }
 
 
@@ -99,14 +96,6 @@ public class ListAdapterDias extends RecyclerView.Adapter<ListAdapterDias.Holder
         public void onClick(View v) {
             onclicklistner.onItemClick(getAdapterPosition(), v);
             itemSelected = getAdapterPosition();
-        }
-
-
-        @Override
-        public boolean onLongClick(View v) {
-            onclicklistner.onItemLongClick(getAdapterPosition(), v);
-            itemSelected = getAdapterPosition();
-            return true;
         }
     }
 }

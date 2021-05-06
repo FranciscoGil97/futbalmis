@@ -119,7 +119,7 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context);
+        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context,fecha);
         fragmentDialogoFecha.show(getActivity().getSupportFragmentManager(), "FragmentDialogoFechaPartidos");
 
         return false;

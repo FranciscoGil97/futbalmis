@@ -8,7 +8,21 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrincipal">#1565C0</color>
-    <color name="colorSecundario">#0D47A1</color>
+
     <color name="colorAlternativo">#2962FF</color>
-    <color name="colorFondo">#82B1FF</color>
+<!--    <color name="colorLight">#5e92f3</color>-->
+<!--    <color name="colorFondo">#82B1FF</color>-->
+<!--    <color name="colorAlternativo2">#2962FF</color>-->
+<!--    <color name="colorDialogo">#1976D2</color>-->
+
+    <color name="primary">#03A9F4</color>
+    <color name="colorSecundario">#0D47A1</color>
+    <color name="primary_dark">#0288D1</color>
+    <color name="primary_light">#82B1FF</color>
+    <color name="accent">#536DFE</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#BDBDBD</color>
+
 </resources>

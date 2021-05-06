@@ -3,6 +3,7 @@ package com.francisco.futbalmis.Clases;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.francisco.futbalmis.Servicios.Utils;
 
@@ -79,5 +80,12 @@ public class Fecha {
             Log.e("ERROR", ex.getMessage());
         }
         return "MAL";
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(!(obj instanceof Fecha))
+            return false;
+        return this.fechaPartido().equalsIgnoreCase(((Fecha)obj).fechaPartido());
     }
 }

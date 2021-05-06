@@ -35,9 +35,10 @@ public class FragmentDialogoFecha extends DialogFragment {
     private static RecyclerView recyclerView;
     ImageButton botonCancelar;
     FragmentTransaction FT;
-
-    public FragmentDialogoFecha(Context context) {
+    int itemSelected;
+    public FragmentDialogoFecha(Context context,Fecha fechaDiaSeleccionado) {
         this.context = context;
+        itemSelected=7;
         for (int i = 0; i <= 14; i++) {
             Fecha fecha = Utils.getFecha(i - 7);
             fechas.add(fecha);
@@ -46,7 +47,7 @@ public class FragmentDialogoFecha extends DialogFragment {
             }
         }
 
-        listAdapter = new ListAdapterDias(fechas, context);
+        listAdapter = new ListAdapterDias(fechas, context,fechaDiaSeleccionado);
     }
 
     @Nullable
@@ -68,14 +69,12 @@ public class FragmentDialogoFecha extends DialogFragment {
         FT = getActivity().getSupportFragmentManager().beginTransaction();
 
         listAdapter.setOnItemClickListener(new ListAdapterDias.onClickListnerMiInterfaz() {
-            @Override
-            public void onItemLongClick(int position, View v) {
-                dismiss();
-            }
+
 
             @Override
             public void onItemClick(int position, View v) {
                 try {
+                    itemSelected=position;
                     vuelveALigas();
                     MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
                     Fecha fechaDiaSeleccionado = Utils.getFecha(position - Utils.DIAS_SEMANA);

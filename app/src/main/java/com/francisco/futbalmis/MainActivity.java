@@ -18,6 +18,7 @@ import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentNoticias;
 import com.francisco.futbalmis.Fragments.FragmentNoticiasCompleta;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
+import com.francisco.futbalmis.Fragments.FragmentPartidosEquipo;
 import com.francisco.futbalmis.Hilos.ActualizaLigasRunnable;
 import com.francisco.futbalmis.Servicios.ServicioApi;
 import com.francisco.futbalmis.Servicios.Utils;
@@ -46,10 +47,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 //        lanzaHiloActualizacionPartidos();
         progressBar = findViewById(R.id.progressBarLigas);
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setDistanceToTriggerSync(500);
         tabs = findViewById(R.id.tab_layout);
         tabArray = new TabLayout.Tab[]{tabs.newTab().setText("Partidos").setIcon(R.drawable.partidos),
                 tabs.newTab().setText("Noticias").setIcon(R.drawable.noticias)};
-
 
         tabs.addTab(tabArray[0]);
         tabs.addTab(tabArray[1]);
@@ -67,33 +68,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefreshLayout.setOnRefreshListener(this);
     }
 
-    private void gestionaActualizacionPartidosOnRefresh() {
-        if (fechaUltimaActualizacion == null) {
-            fechaUltimaActualizacion = new Date();
-            ServicioApi.actualizaPartidosHoy();
-            Log.e("Swipe", "Se actualiza primero");
-        } else {
-            long intervaloActualizacion = new Date().getTime() - fechaUltimaActualizacion.getTime();
-            if (TimeUnit.MILLISECONDS.toMinutes(intervaloActualizacion) >= 1f) {
-                ServicioApi.actualizaPartidosHoy();
-                fechaUltimaActualizacion = new Date();
-                Log.e("Swipe", "Se actualiza ha pasado 1 minutos");
-            } else {
-                cambiaVisibilidadSwipeRefresh();
-                Log.e("Swipe", "No se actualiza");
-            }
-        }
-    }
 
     @Override
     public void onBackPressed() {
         Fragment fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
         if (!(fragmentActual instanceof FragmentLigas)) {
-            if ((fragmentActual instanceof FragmentNoticias))
+            if ((fragmentActual instanceof FragmentNoticias)){
+                swipeRefreshLayout.setEnabled(true);
                 tabArray[0].select();
-            if (!(fragmentActual instanceof FragmentClasificacion))
+            }
+            if (fragmentActual instanceof FragmentPartidos)
                 cambiaVisibilidadTabLayout(View.VISIBLE);
-            if ((fragmentActual instanceof FragmentPartidos))
+            if (!(fragmentActual instanceof FragmentPartidos))
                 cambiaVisibilidadProgressBar(View.GONE);
             desapilaFragment();
         } else finish();
@@ -131,6 +117,24 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         actualizaPartidos.start();
     }
 
+    private void gestionaActualizacionPartidosOnRefresh() {
+        if (fechaUltimaActualizacion == null) {
+            fechaUltimaActualizacion = new Date();
+            ServicioApi.actualizaPartidosHoy();
+            Log.e("Swipe", "Se actualiza primero");
+        } else {
+            long intervaloActualizacion = new Date().getTime() - fechaUltimaActualizacion.getTime();
+            if (TimeUnit.MILLISECONDS.toMinutes(intervaloActualizacion) >= 1f) {
+                ServicioApi.actualizaPartidosHoy();
+                fechaUltimaActualizacion = new Date();
+                Log.e("Swipe", "Se actualiza ha pasado 1 minutos");
+            } else {
+                cambiaVisibilidadSwipeRefresh();
+                Log.e("Swipe", "No se actualiza");
+            }
+        }
+    }
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         if (tabActual != tab.getPosition()) {
@@ -139,8 +143,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             if (tab.getText().toString().equalsIgnoreCase("noticias")) {//significa que antes estaba en partidos
                 if (!getSupportFragmentManager().getFragments().contains(fragmentNoticias))
                     cargarFragment(fragmentNoticias);
+                    swipeRefreshLayout.setEnabled(false);
             } else {
-
+                    swipeRefreshLayout.setEnabled(true);
                 if ((getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentNoticiasCompleta)) {
                     for (int i = 2; i > 0; i--) {
                         FT = getSupportFragmentManager().beginTransaction();

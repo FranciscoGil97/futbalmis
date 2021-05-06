@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/primary_light">
 
     <ImageView
         android:id="@+id/imagenNoticiaCompleta"
@@ -22,7 +22,8 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imagenNoticiaCompleta"
-        android:textIsSelectable="true"/>
+        android:textIsSelectable="true"
+        android:background="@color/primary_dark"/>
 
     <LinearLayout
         android:id="@+id/contenedorFecha"
@@ -47,7 +48,12 @@
             android:textColor="#FF3535"
             android:textStyle="bold" />
     </LinearLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@id/contenedorFecha"
+        android:background="@color/black"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="500dp"
