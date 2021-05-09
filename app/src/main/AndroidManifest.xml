@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Futbalmis"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

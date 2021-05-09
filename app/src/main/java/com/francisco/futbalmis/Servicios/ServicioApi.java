@@ -57,6 +57,7 @@ public class ServicioApi {
                     FragmentLigas.setData(ligas);
                 }
                 MainActivity.cambiaVisibilidadProgressBar(View.GONE);
+
             }
 
             @Override
