@@ -1,6 +1,5 @@
 package com.francisco.futbalmis.Fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +15,13 @@ import com.francisco.futbalmis.Clases.Noticia;
 import com.francisco.futbalmis.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.Calendar;
-
 public class FragmentNoticiasCompleta extends Fragment {
     private View view;
-    private static Context context;
     private Noticia noticia;
     ImageView imagenNoticia;
     TextView titularNoticia, contenidoNoticia,fechaPublicado;
 
-    public FragmentNoticiasCompleta(Context context, Noticia noticia) {
-        this.context = context;
+    public FragmentNoticiasCompleta(Noticia noticia) {
         this.noticia=noticia;
     }
 
@@ -47,9 +42,4 @@ public class FragmentNoticiasCompleta extends Fragment {
 
         return view;
     }
-
-    private String addCeroDigitoFecha(int fecha) {
-        return (fecha < 10 ? "0" + fecha : "" + fecha);
-    }
-
 }

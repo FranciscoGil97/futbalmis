@@ -25,7 +25,6 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
     private List<Partido> mData;
     private LayoutInflater mInflater;
     private Context context;
-    private onClickListnerMiInterfaz onclicklistner;
     private boolean sonPartidosUnSoloEquipo=false;
 
     public ListAdapterPartidos(ArrayList<Partido> itemList, Context context) {
@@ -62,18 +61,7 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
         holder.bindData(mData.get(position), position);
     }
 
-    public interface onClickListnerMiInterfaz {
-        void onItemLongClick(int position, View v);
-        void onItemClick(int position, View v);
-    }
-
-    public void setOnItemClickListener(onClickListnerMiInterfaz onclicklistner) {
-        this.onclicklistner = onclicklistner;
-    }
-
-    public List<Partido> getData() {return mData; }
-
-    public class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    public class Holder extends RecyclerView.ViewHolder{
         View view;
         TextView nombreEquipoLocal, nombreEquipoVisitante, estadoPartido, resultadoEquipoLocal, resultadoEquipoVisitante,horaPartido;
         public ImageView escudoEquipoLocal, escudoEquipoVisitante;
@@ -90,8 +78,6 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
 
             escudoEquipoLocal = itemView.findViewById(R.id.escudoEquipoLocal);
             escudoEquipoVisitante = itemView.findViewById(R.id.escudoEquipoVisitante);
-            itemView.setOnLongClickListener(this);
-            itemView.setOnClickListener(this);
         }
 
         public void bindData(final Partido item, int i) {
@@ -125,17 +111,6 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
 
             Utils.fetchSvg(context, item.getEquipoLocal().getURLEscudo(), escudoEquipoLocal);
             Utils.fetchSvg(context, item.getEquipoVisitante().getURLEscudo(), escudoEquipoVisitante);
-        }
-
-        @Override
-        public void onClick(View v) {
-            onclicklistner.onItemClick(getAdapterPosition(), v);
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            onclicklistner.onItemLongClick(getAdapterPosition(), v);
-            return true;
         }
     }
 }

@@ -68,25 +68,20 @@ public class FragmentDialogoFecha extends DialogFragment {
         recyclerView.setAdapter(listAdapter);
         FT = getActivity().getSupportFragmentManager().beginTransaction();
 
-        listAdapter.setOnItemClickListener(new ListAdapterDias.onClickListnerMiInterfaz() {
+        listAdapter.setOnItemClickListener((position, v) -> {
+            try {
+                itemSelected=position;
+                vuelveALigas();
+                MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
+                Fecha fechaDiaSeleccionado = Utils.getFecha(position - Utils.DIAS_SEMANA);
+                FragmentLigas.setFecha(fechaDiaSeleccionado);
+                FragmentLigas.setData(new ArrayList<>());
+                ExecutorService es = Executors.newSingleThreadExecutor();
+                Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fechaDiaSeleccionado));
+                result.get();
 
-
-            @Override
-            public void onItemClick(int position, View v) {
-                try {
-                    itemSelected=position;
-                    vuelveALigas();
-                    MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-                    Fecha fechaDiaSeleccionado = Utils.getFecha(position - Utils.DIAS_SEMANA);
-                    FragmentLigas.setFecha(fechaDiaSeleccionado);
-                    FragmentLigas.setData(new ArrayList<>());
-                    ExecutorService es = Executors.newSingleThreadExecutor();
-                    Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fechaDiaSeleccionado));
-                    result.get();
-
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
             }
         });
         return view;

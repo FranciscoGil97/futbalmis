@@ -15,7 +15,6 @@ import com.francisco.futbalmis.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -30,7 +29,6 @@ public class ListAdapterNoticias extends RecyclerView.Adapter<ListAdapterNoticia
         this.context = context;
         this.mData = itemList;
     }
-
 
     @Override
     public int getItemCount() {
@@ -54,8 +52,6 @@ public class ListAdapterNoticias extends RecyclerView.Adapter<ListAdapterNoticia
     }
 
     public interface onClickListnerMiInterfaz {
-        void onItemLongClick(int position, View v);
-
         void onItemClick(int position, View v);
     }
 
@@ -63,11 +59,7 @@ public class ListAdapterNoticias extends RecyclerView.Adapter<ListAdapterNoticia
         this.onclicklistner = onclicklistner;
     }
 
-    public List<Noticia> getData() {
-        return mData;
-    }
-
-    public class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View view;
         ImageView imagenNoticia;
         TextView titular, descripcion, fecha;
@@ -80,7 +72,6 @@ public class ListAdapterNoticias extends RecyclerView.Adapter<ListAdapterNoticia
             titular = view.findViewById(R.id.titularNoticia);
             descripcion = view.findViewById(R.id.descripcionNoticia);
             fecha = view.findViewById(R.id.fechaPublicacionNoticia);
-            itemView.setOnLongClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -95,16 +86,6 @@ public class ListAdapterNoticias extends RecyclerView.Adapter<ListAdapterNoticia
         @Override
         public void onClick(View v) {
             onclicklistner.onItemClick(getAdapterPosition(), v);
-        }
-
-        private String addCeroDigitoFecha(int fecha) {
-            return (fecha < 10 ? "0" + fecha : "" + fecha);
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            onclicklistner.onItemLongClick(getAdapterPosition(), v);
-            return true;
         }
     }
 }

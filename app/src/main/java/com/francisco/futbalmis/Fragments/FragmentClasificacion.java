@@ -52,12 +52,9 @@ public class FragmentClasificacion extends Fragment {
 
         try {
             clasificacion = result.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Nullable
@@ -73,42 +70,14 @@ public class FragmentClasificacion extends Fragment {
         Utils.fetchSvg(context, ligaPartidos.getBanderaURL(), banderaPaisLiga);
         paisLiga.setText(ligaPartidos.getPais() + ":");
         nombreLiga.setText(ligaPartidos.getNombre());
-
-//        view.setFocusableInTouchMode(true);
-//        view.requestFocus();
-//        view.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                    Toast.makeText(context, "ADIOS", Toast.LENGTH_SHORT).show();
-//                    getActivity().onBackPressed();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(listAdapter);
 
         if (listAdapter != null) {
-            listAdapter.setOnItemClickListener(new ListAdapterClasificacion.onClickListnerMiInterfaz() {
-                @Override
-                public void onItemLongClick(int position, View v) {
-
-                }
-
-                @Override
-                public void onItemClick(int position, View v) {
-                    //Mostrar partidos de un equipo
-                    if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentClasificacion)
-                        Toast.makeText(context, listAdapter.getData().get(position).getEquipo().getNombre() + "", Toast.LENGTH_SHORT).show();
-
-
-                    MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-                    cargarFragment(new FragmentPartidosEquipo(context, listAdapter.getData().get(position).getEquipo()));
-                }
+            listAdapter.setOnItemClickListener((position, v) -> {
+                MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
+                cargarFragment(new FragmentPartidosEquipo(context, listAdapter.getData().get(position).getEquipo()));
             });
         }
         return view;

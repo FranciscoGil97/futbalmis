@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -87,18 +86,6 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(listAdapter);
-
-        if (listAdapter != null) {
-            listAdapter.setOnItemClickListener(new ListAdapterPartidos.onClickListnerMiInterfaz() {
-                @Override
-                public void onItemLongClick(int position, View v) {
-                }
-
-                @Override
-                public void onItemClick(int position, View v) {
-                }
-            });
-        }
         return view;
     }
 

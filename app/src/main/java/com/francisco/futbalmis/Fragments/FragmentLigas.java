@@ -1,14 +1,12 @@
 package com.francisco.futbalmis.Fragments;
 
 import android.content.Context;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,22 +68,13 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
         appBar.setOnMenuItemClickListener(this);
         FT = getActivity().getSupportFragmentManager().beginTransaction();
 
-        listAdapter.setOnItemClickListener(new ListAdapterLigas.onClickListnerMiInterfaz() {
-            @Override
-            public void onItemLongClick(int position, View v) {
-                //menu contextual mostrando....
-                if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
-                    Toast.makeText(context, listAdapter.getData().get(position).getId() + "", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onItemClick(int position, View v) {
-                if (listAdapter.getData().get(position).getId()>0 && getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
-                    MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-                    FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
-                    cargarFragment(fragmentPartidos);
-                    MainActivity.cambiaVisibilidadTabLayout(View.GONE);
-                }
+        listAdapter.setOnItemClickListener((position, v) -> {
+            if (listAdapter.getData().get(position).getId() > 0 &&
+                    getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentLigas) {
+                MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
+                FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
+                cargarFragment(fragmentPartidos);
+                MainActivity.cambiaVisibilidadTabLayout(View.GONE);
             }
         });
 
@@ -111,7 +100,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context,fecha);
+        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context, fecha);
         fragmentDialogoFecha.show(getActivity().getSupportFragmentManager(), "FragmentDialogoFechaLigas");
 
         return false;

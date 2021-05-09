@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.francisco.futbalmis.Clases.Clasificacion;
-import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.R;
 import com.francisco.futbalmis.Servicios.Utils;
 
@@ -22,13 +21,11 @@ public class ListAdapterClasificacion extends RecyclerView.Adapter<ListAdapterCl
     private LayoutInflater mInflater;
     private Context context;
     private onClickListnerMiInterfaz onclicklistner;
-    private int itemSelected;
 
     public ListAdapterClasificacion(ArrayList<Clasificacion> itemList, Context context) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;
-        itemSelected = 0;
     }
 
     @Override
@@ -53,8 +50,6 @@ public class ListAdapterClasificacion extends RecyclerView.Adapter<ListAdapterCl
     }
 
     public interface onClickListnerMiInterfaz {
-        void onItemLongClick(int position, View v);
-
         void onItemClick(int position, View v);
     }
 
@@ -66,15 +61,7 @@ public class ListAdapterClasificacion extends RecyclerView.Adapter<ListAdapterCl
         return mData;
     }
 
-    public int getItemSelected() {
-        return itemSelected;
-    }
-
-    public void setItemSelected(int itemSelected) {
-        this.itemSelected = itemSelected;
-    }
-
-    public class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView posicionEquipo, puntos, nombreEquipo, golaverajeEquipo, golesContraEquipo, golesFavorEquipo, partidosJugadosEquipo;
         View view;
         public ImageView escudoEquipo;
@@ -91,9 +78,9 @@ public class ListAdapterClasificacion extends RecyclerView.Adapter<ListAdapterCl
             partidosJugadosEquipo = itemView.findViewById(R.id.partidosJugadosEquipoClasificacion);
             escudoEquipo = itemView.findViewById(R.id.escudoEquipoClasificacion);
 
-            itemView.setOnLongClickListener(this);
             itemView.setOnClickListener(this);
         }
+
 
         void bindData(final Clasificacion item, int i) {
             posicionEquipo.setText(item.getPosicion()+"");
@@ -107,19 +94,9 @@ public class ListAdapterClasificacion extends RecyclerView.Adapter<ListAdapterCl
             Utils.fetchSvg(context, item.getEquipo().getURLEscudo(), escudoEquipo);
         }
 
-
         @Override
         public void onClick(View v) {
             onclicklistner.onItemClick(getAdapterPosition(), v);
-            itemSelected = getAdapterPosition();
-        }
-
-
-        @Override
-        public boolean onLongClick(View v) {
-            onclicklistner.onItemLongClick(getAdapterPosition(), v);
-            itemSelected = getAdapterPosition();
-            return true;
         }
     }
 }

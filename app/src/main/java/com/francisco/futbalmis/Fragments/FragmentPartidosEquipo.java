@@ -48,9 +48,7 @@ public class FragmentPartidosEquipo extends Fragment {
 
         try {
             partidos = result.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -67,38 +65,9 @@ public class FragmentPartidosEquipo extends Fragment {
         Utils.fetchSvg(context, equipo.getURLEscudo(), escudoEquipo);
         nombreEquipo.setText(equipo.getNombre());
 
-//        view.setFocusableInTouchMode(true);
-//        view.requestFocus();
-//        view.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                    Toast.makeText(context, "ADIOS", Toast.LENGTH_SHORT).show();
-//                    getActivity().onBackPressed();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(listAdapter);
-
-        if (listAdapter != null) {
-            listAdapter.setOnItemClickListener(new ListAdapterPartidos.onClickListnerMiInterfaz() {
-                @Override
-                public void onItemLongClick(int position, View v) {
-
-                }
-
-                @Override
-                public void onItemClick(int position, View v) {
-                    //Mostrar partidos de un equipo
-
-                }
-            });
-        }
         return view;
     }
 

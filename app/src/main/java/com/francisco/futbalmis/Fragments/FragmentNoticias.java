@@ -61,20 +61,11 @@ public class FragmentNoticias extends Fragment {
         recyclerView.setAdapter(listAdapter);
 
 
-        listAdapter.setOnItemClickListener(new ListAdapterNoticias.onClickListnerMiInterfaz() {
-            @Override
-            public void onItemLongClick(int position, View v) {
-
-            }
-
-            @Override
-            public void onItemClick(int position, View v) {
-                FragmentTransaction FT = getActivity().getSupportFragmentManager().beginTransaction();
-                FT.add(R.id.ligasFragment, new FragmentNoticiasCompleta(context, noticias.get(position)));
-                FT.commit();
-                FT=null;
-                System.out.println("Numero de fragments: "+getActivity().getSupportFragmentManager().getFragments().size());
-            }
+        listAdapter.setOnItemClickListener((position, v) -> {
+            FragmentTransaction FT = getActivity().getSupportFragmentManager().beginTransaction();
+            FT.add(R.id.ligasFragment, new FragmentNoticiasCompleta(noticias.get(position)));
+            FT.commit();
+            System.out.println("Numero de fragments: "+getActivity().getSupportFragmentManager().getFragments().size());
         });
 
         return view;

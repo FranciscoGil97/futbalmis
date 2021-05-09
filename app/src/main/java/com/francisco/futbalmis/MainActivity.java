@@ -50,13 +50,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         tabs = findViewById(R.id.tab_layout);
         tabArray = new TabLayout.Tab[]{tabs.newTab().setText("Partidos").setIcon(R.drawable.partidos),
                 tabs.newTab().setText("Noticias").setIcon(R.drawable.noticias)};
-
         tabs.addTab(tabArray[0]);
         tabs.addTab(tabArray[1]);
 
         tabs.addOnTabSelectedListener(this);
         cambiaVisibilidadProgressBar(View.VISIBLE);
-
 
         FT = getSupportFragmentManager().beginTransaction();
         fragmentLigas = new FragmentLigas(this, FT, Utils.getFecha(0));
@@ -145,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     }
                 } else
                     desapilaFragment();
-
             }
             tabActual = tab.getPosition();
             tabArray[tabActual].select();
@@ -153,13 +150,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-    }
+    public void onTabUnselected(TabLayout.Tab tab) {}
 
     @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
+    public void onTabReselected(TabLayout.Tab tab) {}
 
     public static void cambiaVisibilidadTabLayout(int visibility) {
         tabs.setVisibility(visibility);

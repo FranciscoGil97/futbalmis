@@ -24,14 +24,14 @@ public class ListAdapterDias extends RecyclerView.Adapter<ListAdapterDias.Holder
     private LayoutInflater mInflater;
     private Context context;
     private onClickListnerMiInterfaz onclicklistner;
-    private int itemSelected;
+
     Fecha fechaDiaSeleccionado;
 
     public ListAdapterDias(ArrayList<Fecha> itemList, Context context,Fecha fechaDiaSeleccionado) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;
-        this.itemSelected = itemSelected;
+
         this.fechaDiaSeleccionado=fechaDiaSeleccionado;
     }
 
@@ -95,7 +95,6 @@ public class ListAdapterDias extends RecyclerView.Adapter<ListAdapterDias.Holder
         @Override
         public void onClick(View v) {
             onclicklistner.onItemClick(getAdapterPosition(), v);
-            itemSelected = getAdapterPosition();
         }
     }
 }
