@@ -15,6 +15,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface IServicioApi {
+    @GET("ligas")
+    Call<ArrayList<Liga>> getLigas();
+
     @GET("clasificacion/{idLiga}")
     Call<ArrayList<Clasificacion>> getClasificacionIdLiga(@Path("idLiga") int idLiga);
 

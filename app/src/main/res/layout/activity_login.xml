@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:id="@+id/authLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:hint="Email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/registrarButton"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrincipal"
+                android:text="registrar" />
+
+            <Button
+                android:id="@+id/accederButton"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:backgroundTint="@color/colorPrincipal"
+                android:text="Acceder" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/googleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/googleg_standard_color_18"
+            android:text="GOOGLE"
+            android:textAlignment="textStart"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/invitadoButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/white"
+            android:text="Iniciar como invitado"
+            android:textColor="@color/black" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

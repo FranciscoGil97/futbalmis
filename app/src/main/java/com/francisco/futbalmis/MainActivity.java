@@ -39,11 +39,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         gestionaInicio();
     }
 
-    private void gestionaInicio(){
+    private void gestionaInicio() {
         progressBar = findViewById(R.id.progressBarLigas);
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setDistanceToTriggerSync(500);
@@ -69,8 +68,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onBackPressed() {
         Fragment fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+        int numeroFragments = getSupportFragmentManager().getFragments().size();
+
         if (!(fragmentActual instanceof FragmentLigas)) {
-            if ((fragmentActual instanceof FragmentNoticias)){
+            if ((fragmentActual instanceof FragmentNoticias)) {
                 swipeRefreshLayout.setEnabled(true);
                 tabArray[0].select();
             }
@@ -79,7 +80,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             if (!(fragmentActual instanceof FragmentPartidos))
                 cambiaVisibilidadProgressBar(View.GONE);
             desapilaFragment();
-        } else finish();
+        } else {
+            try {
+                finish();
+            } catch (Exception ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
     }
 
     @Override
@@ -132,9 +139,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             if (tab.getText().toString().equalsIgnoreCase("noticias")) {//significa que antes estaba en partidos
                 if (!getSupportFragmentManager().getFragments().contains(fragmentNoticias))
                     cargarFragment(fragmentNoticias);
-                    swipeRefreshLayout.setEnabled(false);
+                swipeRefreshLayout.setEnabled(false);
             } else {
-                    swipeRefreshLayout.setEnabled(true);
+                swipeRefreshLayout.setEnabled(true);
                 if ((getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentNoticiasCompleta)) {
                     for (int i = 2; i > 0; i--) {
                         FT = getSupportFragmentManager().beginTransaction();
@@ -150,10 +157,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     @Override
-    public void onTabUnselected(TabLayout.Tab tab) {}
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
 
     @Override
-    public void onTabReselected(TabLayout.Tab tab) {}
+    public void onTabReselected(TabLayout.Tab tab) {
+    }
 
     public static void cambiaVisibilidadTabLayout(int visibility) {
         tabs.setVisibility(visibility);

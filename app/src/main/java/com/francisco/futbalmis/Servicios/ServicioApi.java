@@ -10,6 +10,7 @@ import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Clases.Partido;
 import com.francisco.futbalmis.Fragments.FragmentClasificacion;
+import com.francisco.futbalmis.Fragments.FragmentElegirLigasFavoritas;
 import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
 import com.francisco.futbalmis.Fragments.FragmentPartidosEquipo;
@@ -45,7 +46,7 @@ public class ServicioApi {
 
         _ligas.enqueue(new Callback<ArrayList<Liga>>() {
             @Override
-            public void onResponse(@NonNull Call<ArrayList<Liga>> call,@NonNull Response<ArrayList<Liga>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Liga>> call, @NonNull Response<ArrayList<Liga>> response) {
                 ligas = new ArrayList<>(response.body());
 
                 if (ligas.size() > 0)
@@ -61,7 +62,30 @@ public class ServicioApi {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArrayList<Liga>> call,@NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Liga>> call, @NonNull Throwable t) {
+                Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
+            }
+        });
+        return ligas;
+    }
+
+    public static ArrayList<Liga> getLigas() throws IOException {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URLBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        IServicioApi servicio = retrofit.create(IServicioApi.class);
+
+        Call<ArrayList<Liga>> _ligas = servicio.getLigas();
+
+        _ligas.enqueue(new Callback<ArrayList<Liga>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<Liga>> call, @NonNull Response<ArrayList<Liga>> response) {
+                ligas = new ArrayList<>(response.body());
+                FragmentElegirLigasFavoritas.setData(ligas);
+            }
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<Liga>> call, @NonNull Throwable t) {
                 Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
             }
         });
@@ -79,7 +103,7 @@ public class ServicioApi {
 
         _partidos.enqueue(new Callback<ArrayList<Partido>>() {
             @Override
-            public void onResponse(@NonNull Call<ArrayList<Partido>> call,@NonNull Response<ArrayList<Partido>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Partido>> call, @NonNull Response<ArrayList<Partido>> response) {
                 partidos = new ArrayList<>(response.body());
                 Log.e("CODE", response.code() + "");
                 Log.e("Partidos", partidos.size() + "");
@@ -90,7 +114,7 @@ public class ServicioApi {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArrayList<Partido>> call,@NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Partido>> call, @NonNull Throwable t) {
                 Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
             }
         });
@@ -133,7 +157,7 @@ public class ServicioApi {
 
         _partidos.enqueue(new Callback<ArrayList<Partido>>() {
             @Override
-            public void onResponse(@NonNull Call<ArrayList<Partido>> call,@NonNull Response<ArrayList<Partido>> response) {
+            public void onResponse(@NonNull Call<ArrayList<Partido>> call, @NonNull Response<ArrayList<Partido>> response) {
                 partidos = new ArrayList<>(response.body());
                 Log.e("CODE", response.code() + "");
                 Log.e("Partidos", partidos.size() + "");
@@ -141,11 +165,11 @@ public class ServicioApi {
                 partidos = new ArrayList<>(response.body());
                 MainActivity.cambiaVisibilidadProgressBar(View.GONE);
                 FragmentPartidosEquipo.setData(partidos);
-                System.out.println("Partidos obtenidos equipo"+partidos.size());
+                System.out.println("Partidos obtenidos equipo" + partidos.size());
             }
 
             @Override
-            public void onFailure(@NonNull Call<ArrayList<Partido>> call,@NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ArrayList<Partido>> call, @NonNull Throwable t) {
                 Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
             }
         });
@@ -217,7 +241,6 @@ public class ServicioApi {
             }
         });
     }
-
 
 
 }

@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
-import com.francisco.futbalmis.Hilos.LigasCallable;
+import com.francisco.futbalmis.Hilos.LigasFechaCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterLigas;
 import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
@@ -47,7 +47,7 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
 
         try {
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Future<ArrayList<Liga>> result = es.submit(new LigasCallable(fecha));
+            Future<ArrayList<Liga>> result = es.submit(new LigasFechaCallable(fecha));
             ligas = result.get();
             listAdapter = new ListAdapterLigas(ligas, context);
         } catch (ExecutionException | InterruptedException e) {

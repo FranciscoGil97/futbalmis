@@ -41,6 +41,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class Utils {
+    public enum ProvicerType {BASIC, GOOGLE}
     private static OkHttpClient httpClient;
     public static final int DIAS_SEMANA = 7;
 
