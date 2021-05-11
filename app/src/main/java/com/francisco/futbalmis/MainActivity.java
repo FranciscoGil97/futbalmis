@@ -1,29 +1,45 @@
 package com.francisco.futbalmis;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.francisco.futbalmis.Fragments.FragmentElegirLigasFavoritas;
 import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentNoticias;
 import com.francisco.futbalmis.Fragments.FragmentNoticiasCompleta;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
 import com.francisco.futbalmis.Servicios.ServicioApi;
 import com.francisco.futbalmis.Servicios.Utils;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.tabs.TabLayout;
+import com.squareup.picasso.Picasso;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 @SuppressLint("StaticFieldLeak")
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, TabLayout.OnTabSelectedListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, TabLayout.OnTabSelectedListener, View.OnClickListener,NavigationView.OnNavigationItemSelectedListener {
     public static FragmentTransaction FT;
     private static SwipeRefreshLayout swipeRefreshLayout;
     FragmentLigas fragmentLigas;
@@ -34,17 +50,36 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     int tabActual = 0;
     private final String URL_NOTICIAS = "https://as.com/rss/futbol/portada.xml";
     TabLayout.Tab[] tabArray;
+    Button logoutButton;
+    TextView emailUsuario;
+    CircleImageView imagenUsuario;
+    NavigationView navigationView;
+    String email, urlFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        email=getIntent().getStringExtra("email");
+        urlFoto=getIntent().getStringExtra("foto");
         gestionaInicio();
     }
 
     private void gestionaInicio() {
         progressBar = findViewById(R.id.progressBarLigas);
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        logoutButton=findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(this);
+        navigationView=findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header=navigationView.getHeaderView(0);
+        emailUsuario=header.findViewById(R.id.emailUsuario);
+        imagenUsuario=header.findViewById(R.id.imagenUsuario);
+        emailUsuario.setText(email);
+        if(urlFoto!=null){
+            Picasso.get().load(urlFoto).into(imagenUsuario);
+        }
+
         swipeRefreshLayout.setDistanceToTriggerSync(500);
         tabs = findViewById(R.id.tab_layout);
         tabArray = new TabLayout.Tab[]{tabs.newTab().setText("Partidos").setIcon(R.drawable.partidos),
@@ -166,5 +201,43 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     public static void cambiaVisibilidadTabLayout(int visibility) {
         tabs.setVisibility(visibility);
+    }
+
+    private void logout() {
+        SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
+        prefs.edit()
+                .clear()
+                .apply();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==logoutButton.getId()){
+            logout();
+            Intent loginActivity = new Intent(this, LoginActivity.class);
+            startActivityForResult(loginActivity,102);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==102){
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.todasLigas:
+
+                break;
+            case R.id.modificarFavoritos:
+                cargarFragment(new FragmentElegirLigasFavoritas(this,email));
+                break;
+        }
+
+        return true;
     }
 }

@@ -26,15 +26,22 @@ import com.francisco.futbalmis.Servicios.Utils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,23 +52,45 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
     private Context context;
     private RecyclerView recyclerView;
     private static ListAdapterElegirLigasFavoritas listAdapter;
-    private ArrayList<Liga> ligas=new ArrayList<>();
+    private ArrayList<Liga> ligas = new ArrayList<>();
     Button siguienteButton;
     String email;
 
-    private FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private final int MAINACTIVITY_CODE = 101;
+    List<Integer> ligasSeleccionada = new ArrayList<>();
+    String ligasFavoritasString = "", prueba;
 
-    public FragmentElegirLigasFavoritas(Context context,String email) {
+    public FragmentElegirLigasFavoritas(Context context, String email) {
         this.context = context;
 
-        this.email=email;
+//        this.email = email;
+        this.email = "fj.gil16@iesdoctorbalmis.com";
+
+        db.collection("users").get().addOnCompleteListener(task -> {
+            for (DocumentSnapshot document : task.getResult()) {
+                Log.e("DOCUMENTO", document.getId() + " => " + document.getData());
+            }
+        });
+        db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                ligasFavoritasString = task.getResult().getData().get("ligasFavoritas").toString();
+                ligasFavoritasString = ligasFavoritasString.replace('[', ' ');
+                ligasFavoritasString = ligasFavoritasString.replace(']', ' ');
+                ligasFavoritasString = ligasFavoritasString.replaceAll(" ", "");
+                List<String> aux = Arrays.asList(ligasFavoritasString.split(","));
+                aux.forEach(s -> ligasSeleccionada.add(Integer.parseInt(s)));
+
+            }
+        });
+        Log.e("prueba ", (prueba == null) + "");
         try {
             ExecutorService es = Executors.newSingleThreadExecutor();
             Future<ArrayList<Liga>> result = es.submit(new LigasCallable());
             ligas = result.get();
-            listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context);
+            listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context, ligasSeleccionada);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -92,20 +121,21 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
     public void onClick(View v) {
         List<Liga> ligasSeleccionadas = listAdapter.getLigasSeleccionadas();
         List<Integer> idLigasSeleccionas = new ArrayList<>();
-        ligasSeleccionadas.forEach(liga->idLigasSeleccionas.add(liga.getId()));
+        ligasSeleccionadas.forEach(liga -> idLigasSeleccionas.add(liga.getId()));
+
         //Guardar en la base de datos las ligas
-        HashMap<String, Object> datos=new HashMap<>();
-        datos.put("ligasFavoritas",idLigasSeleccionas);
+        HashMap<String, Object> datos = new HashMap<>();
+        datos.put("ligasFavoritas", idLigasSeleccionas);
         db.collection("users").document(email).set(datos);
 
         Intent elegirLigas = new Intent(context, MainActivity.class);
-        startActivityForResult(elegirLigas,MAINACTIVITY_CODE);
+        startActivityForResult(elegirLigas, MAINACTIVITY_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == MAINACTIVITY_CODE) getActivity().finish();
+        if (requestCode == MAINACTIVITY_CODE) getActivity().finish();
     }
 }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,12 +27,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -47,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setTheme(R.style.Theme_Futbalmis);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+//        logout();
         email = findViewById(R.id.usernameEditText);
         password = findViewById(R.id.passwordEditText);
         acceder = findViewById(R.id.accederButton);
@@ -70,9 +73,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()) {
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(command -> {
                     if (command.isSuccessful()) {
-                        guardaSesion(command.getResult().getUser().getEmail());
+                        guardaSesion(command.getResult().getUser().getEmail(), null);
                         //mostrar ligas
-                        irAMainActivity();
+                        irAMainActivity(command.getResult().getUser().getEmail(), null);
                     } else {
                         showAlert();
                     }
@@ -82,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()) {
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(command -> {
                     if (command.isSuccessful()) {
-                        guardaSesion(command.getResult().getUser().getEmail());
+                        guardaSesion(command.getResult().getUser().getEmail(), null);
                         //Elegir ligas favoritas
                         elegirLigas(email.getText().toString());
                     } else {
@@ -99,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             googleClient.signOut();
             startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
         } else if (v.getId() == invitadoButton.getId()) {
-            irAMainActivity();
+            irAMainActivity("Invitado", null);
         }
     }
 
@@ -108,14 +111,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GOOGLE_SIGN_IN) {
+
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                boolean[] existe = {false};
+                db.collection("users").document(account.getEmail()).get().addOnSuccessListener(command -> {
+                    existe[0] = command.exists();
+                });
                 if (account != null) {
                     AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(this, task1 -> {
                         if (task1.isSuccessful()) {
-                            elegirLigas(task1.getResult().getUser().getEmail());
+                            SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
+                            String email = prefs.getString("email", null);
+                            if (email == null)
+                                guardaSesion(task1.getResult().getUser().getEmail(), task1.getResult().getUser().getPhotoUrl().toString());
+
+                            if (existe[0])
+                                irAMainActivity(task1.getResult().getUser().getEmail(), task1.getResult().getUser().getPhotoUrl().toString());
+                            else elegirLigas(task1.getResult().getUser().getEmail());
                         } else {
                             showAlert();
                         }
@@ -128,8 +144,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 System.err.println(ex.getMessage());
                 showAlert();
             }
-        }
-        else if(requestCode == MAINACTIVITY_CODE){
+        } else if (requestCode == MAINACTIVITY_CODE) {
             finish();
         }
     }
@@ -144,8 +159,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void elegirLigas(String email) {
-        cargarFragment(new FragmentElegirLigasFavoritas(this,email));
+        cargarFragment(new FragmentElegirLigasFavoritas(this, email));
     }
+
     private void cargarFragment(Fragment f) {
         setContentView(R.layout.activity_main);
         ProgressBar progressBar = findViewById(R.id.progressBarLigas);
@@ -159,30 +175,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         FT = null;
     }
 
-    public void irAMainActivity() {
-        Intent elegirLigas = new Intent(this, MainActivity.class);
-        startActivityForResult(elegirLigas,MAINACTIVITY_CODE);
+    public void irAMainActivity(String email, String urlFoto) {
+
+        Intent mainActivity = new Intent(this, MainActivity.class);
+        mainActivity.putExtra("email", email);
+        mainActivity.putExtra("foto", urlFoto);
+        startActivityForResult(mainActivity, MAINACTIVITY_CODE);
     }
 
-    public void guardaSesion(String email) {
+    public void guardaSesion(String email, String urlFoto) {
         SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
         prefs.edit()
                 .putString("email", email)
+                .putString("foto", urlFoto)
                 .apply();
     }
 
     private void session() {
         SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
         String email = prefs.getString("email", null);
+        String urlFoto = prefs.getString("foto", null);
 
         if (email != null) {
+            Log.e("SESION INICIADA", email);
             auth.setVisibility(View.GONE);
-            irAMainActivity();
+            irAMainActivity(email, urlFoto);
         }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         auth.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }
