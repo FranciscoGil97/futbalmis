@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     String email, urlFoto;
     FragmentElegirLigasFavoritas fragmentElegirLigas;
     FragmentTodasLigas fragmentTodasLigas;
+    List<Integer> ligasSeleccionada=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         email = prefs.getString("email", null);
         urlFoto = prefs.getString("foto", null);
         gestionaInicio();
+
+        Utils.getLigasFavoritas(email,ligasSeleccionada);
     }
 
     private void gestionaInicio() {
@@ -263,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             case R.id.modificarFavoritos:
                 if (!email.equalsIgnoreCase("invitado")) {
                     if (fragmentElegirLigas == null)
-                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas);
+                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas, ligasSeleccionada);
                     cargarFragment(fragmentElegirLigas);
                 } else
                     Toast.makeText(this, "No puedes tener ligas favoritas guardadas.\nPor favor inicia sesión", Toast.LENGTH_LONG).show();

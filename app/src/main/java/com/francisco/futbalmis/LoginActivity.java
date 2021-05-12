@@ -10,31 +10,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.francisco.futbalmis.Fragments.FragmentElegirLigasFavoritas;
-import com.francisco.futbalmis.Fragments.FragmentLigas;
-import com.francisco.futbalmis.Servicios.Utils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -104,7 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             googleClient.signOut();
             startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
         } else if (v.getId() == invitadoButton.getId()) {
-            guardaSesion("Invitado",null);
+            guardaSesion("Invitado", null);
             irAMainActivity("Invitado", null);
         }
     }
@@ -162,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void elegirLigas(String email) {
-        cargarFragment(new FragmentElegirLigasFavoritas(this, email,new ArrayList<>()));
+        cargarFragment(new FragmentElegirLigasFavoritas(this, email, new ArrayList<>(), new ArrayList<>()));
     }
 
     private void cargarFragment(Fragment f) {

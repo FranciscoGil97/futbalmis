@@ -63,6 +63,9 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
         recyclerView = view.findViewById(R.id.listaLigas);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+//        ViewGroup.LayoutParams params=recyclerView.getLayoutParams();
+//        params.height=800;
+//        recyclerView.setLayoutParams(params);
         recyclerView.setAdapter(listAdapter);
         appBar = view.findViewById(R.id.materialAppBar);
         appBar.setOnMenuItemClickListener(this);

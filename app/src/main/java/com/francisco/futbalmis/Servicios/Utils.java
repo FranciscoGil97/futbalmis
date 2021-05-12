@@ -4,14 +4,16 @@ import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.widget.ImageView;
 
-import androidx.core.app.ComponentActivity;
+import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Noticia;
-import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pixplicity.sharp.Sharp;
 
 import org.w3c.dom.Document;
@@ -41,11 +43,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class Utils {
-    public enum ProvicerType {BASIC, GOOGLE}
     private static OkHttpClient httpClient;
     public static final int DIAS_SEMANA = 7;
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    // this method is used to fetch svg and load it into target imageview.
+    public static String ligasFavoritasString = "";
+
     public static void fetchSvg(Context context, String url, final ImageView target) {
         if (httpClient == null) {
             httpClient = new OkHttpClient.Builder()
@@ -228,4 +231,26 @@ public class Utils {
         }
         return noticias;
     }
+
+    public static void getLigasFavoritas(String email, List<Integer> ligasFavoritas){
+        db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().exists()) {
+                    ligasFavoritasString = task.getResult().getData().get("ligasFavoritas").toString();
+                    ligasFavoritasString = ligasFavoritasString.replace('[', ' ');
+                    ligasFavoritasString = ligasFavoritasString.replace(']', ' ');
+                    ligasFavoritasString = ligasFavoritasString.replaceAll(" ", "");
+                    if (ligasFavoritasString.length() > 0) {
+
+                        List<String> aux = Arrays.asList(ligasFavoritasString.split(","));
+                        aux.forEach(s -> ligasFavoritas.add(Integer.parseInt(s)));
+
+                    }
+                }
+            }
+
+        });
+    }
+
 }
