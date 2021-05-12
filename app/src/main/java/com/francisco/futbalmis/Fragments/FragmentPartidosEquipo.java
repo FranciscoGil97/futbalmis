@@ -42,15 +42,14 @@ public class FragmentPartidosEquipo extends Fragment {
     public FragmentPartidosEquipo(Context context, Equipo equipo) {
         this.context = context;
         this.equipo=equipo;
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        Future<ArrayList<Partido>> result = es.submit(new PartidosEquipoCallable(equipo.getId()));
-        listAdapter = new ListAdapterPartidos(partidos,context,true);
-
         try {
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Future<ArrayList<Partido>> result = es.submit(new PartidosEquipoCallable(equipo.getId()));
             partidos = result.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+        listAdapter = new ListAdapterPartidos(partidos,context,true);
     }
 
     @Nullable

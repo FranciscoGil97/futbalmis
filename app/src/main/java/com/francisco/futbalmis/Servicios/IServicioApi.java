@@ -30,6 +30,9 @@ public interface IServicioApi {
     @GET("partidos/fecha/{fecha}/{idLiga}")
     Call<ArrayList<Partido>> getPartidosFecha(@Path("fecha") String fecha, @Path("idLiga") int idLiga);
 
+    @GET("partidos/liga/{idLiga}")
+    Call<ArrayList<Partido>> getTodosPartidosLiga(@Path("idLiga") int idLiga);
+
     @PUT("partidos/actualizahoy")
     Call<String> actualizaPartidosHoy();
 

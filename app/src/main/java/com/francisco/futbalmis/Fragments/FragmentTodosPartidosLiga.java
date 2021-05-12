@@ -22,6 +22,7 @@ import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Clases.Partido;
 import com.francisco.futbalmis.Hilos.PartidosCallable;
+import com.francisco.futbalmis.Hilos.TodosPartidosLigaCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterPartidos;
 import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
@@ -34,34 +35,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FragmentPartidos extends Fragment implements View.OnClickListener, Toolbar.OnMenuItemClickListener {
+public class FragmentTodosPartidosLiga extends Fragment implements View.OnClickListener{
     private View view;
     private static Context context;
     private static RecyclerView recyclerView;
     private static ListAdapterPartidos listAdapter;
     private ArrayList<Partido> partidos = new ArrayList<>();
     private Liga ligaPartido;
-    private Fecha fecha;
     TextView nombreLiga, paisLiga;
     public ImageView banderaPaisLiga;
     LinearLayout liga;
     MaterialToolbar appBar;
     FragmentTransaction FT;
 
-    public FragmentPartidos(Context context, Liga ligaPartido, Fecha fecha,FragmentTransaction FT) {
+    public FragmentTodosPartidosLiga(Context context, Liga ligaPartido, FragmentTransaction FT) {
         this.context = context;
-        this.fecha = fecha;
         this.FT = FT;
         this.ligaPartido = new Liga(ligaPartido.getId(), ligaPartido.getNombre(), ligaPartido.getCodigoPais(), ligaPartido.getPais(), ligaPartido.getBanderaURL());
 
         try {
             ExecutorService es = Executors.newSingleThreadExecutor();
-            Future<ArrayList<Partido>> result = es.submit(new PartidosCallable(ligaPartido.getId(), fecha));
+            Future<ArrayList<Partido>> result = es.submit(new TodosPartidosLigaCallable(ligaPartido.getId()));
             partidos = result.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        listAdapter = new ListAdapterPartidos(partidos, context);
+        listAdapter = new ListAdapterPartidos(partidos, context,true);
     }
 
     @Nullable
@@ -74,7 +73,6 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
         paisLiga = view.findViewById(R.id.paisLigaPartidos);
         liga = view.findViewById(R.id.partidosLiga);
         appBar = view.findViewById(R.id.materialAppBar);
-        appBar.setOnMenuItemClickListener(this);
         FT = getActivity().getSupportFragmentManager().beginTransaction();
 
         Utils.fetchSvg(context, ligaPartido.getBanderaURL(), banderaPaisLiga);
@@ -96,19 +94,11 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.partidosLiga && getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentPartidos) {
+        if (v.getId() == R.id.partidosLiga && getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentTodosPartidosLiga) {
             MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
             FragmentTransaction FT = getActivity().getSupportFragmentManager().beginTransaction();
             FT.add(R.id.ligasFragment, new FragmentClasificacion(context, ligaPartido,FT));
             FT.commit();
         }
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context,fecha);
-        fragmentDialogoFecha.show(getActivity().getSupportFragmentManager(), "FragmentDialogoFechaPartidos");
-
-        return false;
     }
 }

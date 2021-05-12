@@ -25,6 +25,7 @@ import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentNoticias;
 import com.francisco.futbalmis.Fragments.FragmentNoticiasCompleta;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
+import com.francisco.futbalmis.Fragments.FragmentTodasLigas;
 import com.francisco.futbalmis.Hilos.LigasCallable;
 import com.francisco.futbalmis.Servicios.ServicioApi;
 import com.francisco.futbalmis.Servicios.Utils;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     NavigationView navigationView;
     String email, urlFoto;
     FragmentElegirLigasFavoritas fragmentElegirLigas;
+    FragmentTodasLigas fragmentTodasLigas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onBackPressed() {
         Fragment fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+        if (getSupportFragmentManager().getFragments().size() > 1)
+            if (getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas) {
+                swipeRefreshLayout.setEnabled(true);
+                tabs.setVisibility(View.VISIBLE);
+            }
+
         if (!(fragmentActual instanceof FragmentLigas)) {
             if ((fragmentActual instanceof FragmentNoticias)) {
                 swipeRefreshLayout.setEnabled(true);
@@ -247,14 +255,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         tabs.setVisibility(View.GONE);
         switch (item.getItemId()) {
             case R.id.todasLigas:
-
+                if (fragmentTodasLigas == null)
+                    fragmentTodasLigas = new FragmentTodasLigas(this, getSupportFragmentManager().beginTransaction(), todasLigas);
+                cargarFragment(fragmentTodasLigas);
                 break;
+
             case R.id.modificarFavoritos:
                 if (!email.equalsIgnoreCase("invitado")) {
                     if (fragmentElegirLigas == null)
                         fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas);
                     cargarFragment(fragmentElegirLigas);
-                }else Toast.makeText(this, "No puedes tener ligas favoritas guardadas.\nPor favor inicia sesión", Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(this, "No puedes tener ligas favoritas guardadas.\nPor favor inicia sesión", Toast.LENGTH_LONG).show();
                 break;
         }
 
@@ -263,9 +275,5 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     public static void setTodasLigas(List<Liga> ligas) {
         todasLigas = ligas;
-    }
-
-    public static List<Liga> getTodasLigas() {
-        return todasLigas;
     }
 }

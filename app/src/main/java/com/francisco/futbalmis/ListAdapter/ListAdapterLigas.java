@@ -25,7 +25,7 @@ public class ListAdapterLigas extends RecyclerView.Adapter<ListAdapterLigas.Hold
     private Context context;
     private onClickListnerMiInterfaz onclicklistner;
 
-    public ListAdapterLigas(ArrayList<Liga> itemList, Context context) {
+    public ListAdapterLigas(List<Liga> itemList, Context context) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;

@@ -14,6 +14,7 @@ import com.francisco.futbalmis.Fragments.FragmentElegirLigasFavoritas;
 import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
 import com.francisco.futbalmis.Fragments.FragmentPartidosEquipo;
+import com.francisco.futbalmis.Fragments.FragmentTodosPartidosLiga;
 import com.francisco.futbalmis.MainActivity;
 
 import java.io.IOException;
@@ -137,6 +138,32 @@ public class ServicioApi {
                 partidos = new ArrayList<>(response.body());
                 MainActivity.cambiaVisibilidadProgressBar(View.GONE);
                 FragmentPartidos.setData(partidos);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<Partido>> call, @NonNull Throwable t) {
+                Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
+            }
+        });
+        return partidos;
+    }
+
+    public static ArrayList<Partido> getTodosPartidosLiga(int idLiga) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URLBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        IServicioApi servicio = retrofit.create(IServicioApi.class);
+
+        Call<ArrayList<Partido>> _partidos = servicio.getTodosPartidosLiga(idLiga);
+
+        _partidos.enqueue(new Callback<ArrayList<Partido>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<Partido>> call, @NonNull Response<ArrayList<Partido>> response) {
+                partidos = new ArrayList<>(response.body());
+                partidos = new ArrayList<>(response.body());
+                MainActivity.cambiaVisibilidadProgressBar(View.GONE);
+                FragmentTodosPartidosLiga.setData(partidos);
             }
 
             @Override

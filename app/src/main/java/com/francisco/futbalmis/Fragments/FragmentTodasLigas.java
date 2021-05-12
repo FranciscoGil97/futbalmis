@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,34 +26,26 @@ import com.francisco.futbalmis.R;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class FragmentTodasLigas extends Fragment implements Toolbar.OnMenuItemClickListener {
+public class FragmentTodasLigas extends Fragment{
     private View view;
     private Context context;
     private RecyclerView recyclerView;
     private static ListAdapterLigas listAdapter;
-    private ArrayList<Liga> ligas;
-    private static Fecha fecha;
+    private List<Liga> ligas;
     private FragmentTransaction FT;
     MaterialToolbar appBar;
 
-    public FragmentTodasLigas(Context context, FragmentTransaction FT, Fecha fecha) {
+    public FragmentTodasLigas(Context context, FragmentTransaction FT, List<Liga> ligas) {
         this.context = context;
         this.FT = FT;
-        this.fecha = fecha;
-
-        try {
-            ExecutorService es = Executors.newSingleThreadExecutor();
-            Future<ArrayList<Liga>> result = es.submit(new LigasFechaCallable(fecha));
-            ligas = result.get();
-            listAdapter = new ListAdapterLigas(ligas, context);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.ligas=ligas;
+        listAdapter = new ListAdapterLigas(ligas, context);
     }
 
     @Nullable
@@ -65,16 +58,16 @@ public class FragmentTodasLigas extends Fragment implements Toolbar.OnMenuItemCl
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(listAdapter);
         appBar = view.findViewById(R.id.materialAppBar);
-        appBar.setOnMenuItemClickListener(this);
         FT = getActivity().getSupportFragmentManager().beginTransaction();
 
         listAdapter.setOnItemClickListener((position, v) -> {
             if (listAdapter.getData().get(position).getId() > 0 &&
                     getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentTodasLigas) {
                 MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
-                FragmentPartidos fragmentPartidos = new FragmentPartidos(context, listAdapter.getData().get(position), fecha, getActivity().getSupportFragmentManager().beginTransaction());
+                FragmentTodosPartidosLiga fragmentPartidos = new FragmentTodosPartidosLiga(context, listAdapter.getData().get(position), getActivity().getSupportFragmentManager().beginTransaction());
                 cargarFragment(fragmentPartidos);
                 MainActivity.cambiaVisibilidadTabLayout(View.GONE);
+//                Toast.makeText(context, "Todos los partidos de la liga: "+listAdapter.getData().get(position).getNombre(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -86,23 +79,11 @@ public class FragmentTodasLigas extends Fragment implements Toolbar.OnMenuItemCl
         listAdapter.notifyDataSetChanged();
     }
 
-    public static void setFecha(Fecha fechaNueva) {
-        fecha = new Fecha(fechaNueva);
-    }
-
     private void cargarFragment(Fragment f) {
         FT = getActivity().getSupportFragmentManager().beginTransaction();
         FT.add(R.id.ligasFragment, f);
         FT.commit();
         Log.e("Numero de fragment", getActivity().getSupportFragmentManager().getFragments().size() + "");
         FT = null;
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        FragmentDialogoFecha fragmentDialogoFecha = new FragmentDialogoFecha(context, fecha);
-        fragmentDialogoFecha.show(getActivity().getSupportFragmentManager(), "FragmentDialogoFechaLigas");
-
-        return false;
     }
 }

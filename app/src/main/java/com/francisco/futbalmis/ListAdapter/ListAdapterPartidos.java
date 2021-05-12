@@ -99,6 +99,16 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
             } else {
                 Fecha fechaPartido = new Fecha(item.getFechaPartido());
                 horaPartido.setText(fechaPartido.fechaPartido());
+                if (!item.getResultadoEquipoLocal().equals("null")){
+                    resultadoEquipoLocal.setText(item.getResultadoEquipoLocal());
+                    resultadoEquipoVisitante.setText(item.getResultadoEquipoVisitate());
+                    horaPartido.setText(fechaPartido.fechaPartido());
+                }else{
+                    resultadoEquipoLocal.setText("");
+                    resultadoEquipoVisitante.setText("");
+                    horaPartido.setText(fechaPartido.fechaPartido()+" "+item.getHoraPartido().substring(0, 5));
+                }
+
             }
 
 //            if (item.getResultadoEquipoLocal().equals("null")) {
