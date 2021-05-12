@@ -37,6 +37,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     EditText email, password;
     Button acceder, registrar, googleButton, invitadoButton;
@@ -102,6 +104,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             googleClient.signOut();
             startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
         } else if (v.getId() == invitadoButton.getId()) {
+            guardaSesion("Invitado",null);
             irAMainActivity("Invitado", null);
         }
     }
@@ -159,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void elegirLigas(String email) {
-        cargarFragment(new FragmentElegirLigasFavoritas(this, email));
+        cargarFragment(new FragmentElegirLigasFavoritas(this, email,new ArrayList<>()));
     }
 
     private void cargarFragment(Fragment f) {
@@ -178,8 +181,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void irAMainActivity(String email, String urlFoto) {
 
         Intent mainActivity = new Intent(this, MainActivity.class);
-        mainActivity.putExtra("email", email);
-        mainActivity.putExtra("foto", urlFoto);
         startActivityForResult(mainActivity, MAINACTIVITY_CODE);
     }
 

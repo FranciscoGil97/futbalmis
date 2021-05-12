@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,26 +19,32 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Fragments.FragmentElegirLigasFavoritas;
 import com.francisco.futbalmis.Fragments.FragmentLigas;
 import com.francisco.futbalmis.Fragments.FragmentNoticias;
 import com.francisco.futbalmis.Fragments.FragmentNoticiasCompleta;
 import com.francisco.futbalmis.Fragments.FragmentPartidos;
+import com.francisco.futbalmis.Hilos.LigasCallable;
 import com.francisco.futbalmis.Servicios.ServicioApi;
 import com.francisco.futbalmis.Servicios.Utils;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 @SuppressLint("StaticFieldLeak")
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, TabLayout.OnTabSelectedListener, View.OnClickListener,NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, TabLayout.OnTabSelectedListener, View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     public static FragmentTransaction FT;
     private static SwipeRefreshLayout swipeRefreshLayout;
     FragmentLigas fragmentLigas;
@@ -49,34 +54,46 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     static TabLayout tabs;
     int tabActual = 0;
     private final String URL_NOTICIAS = "https://as.com/rss/futbol/portada.xml";
+    private static List<Liga> todasLigas = new ArrayList<>();
     TabLayout.Tab[] tabArray;
     Button logoutButton;
     TextView emailUsuario;
     CircleImageView imagenUsuario;
     NavigationView navigationView;
     String email, urlFoto;
+    FragmentElegirLigasFavoritas fragmentElegirLigas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        email=getIntent().getStringExtra("email");
-        urlFoto=getIntent().getStringExtra("foto");
+        SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
+        email = prefs.getString("email", null);
+        urlFoto = prefs.getString("foto", null);
         gestionaInicio();
     }
 
     private void gestionaInicio() {
+        try {
+            ExecutorService es = Executors.newSingleThreadExecutor();
+            Future<ArrayList<Liga>> result = es.submit(new LigasCallable(false));
+            todasLigas = result.get();
+            Log.e("Intancia List", "");
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
         progressBar = findViewById(R.id.progressBarLigas);
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
-        logoutButton=findViewById(R.id.logoutButton);
+        logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(this);
-        navigationView=findViewById(R.id.navigationView);
+        navigationView = findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(this);
-        View header=navigationView.getHeaderView(0);
-        emailUsuario=header.findViewById(R.id.emailUsuario);
-        imagenUsuario=header.findViewById(R.id.imagenUsuario);
+        View header = navigationView.getHeaderView(0);
+        emailUsuario = header.findViewById(R.id.emailUsuario);
+        imagenUsuario = header.findViewById(R.id.imagenUsuario);
         emailUsuario.setText(email);
-        if(urlFoto!=null){
+        if (urlFoto != null) {
             Picasso.get().load(urlFoto).into(imagenUsuario);
         }
 
@@ -103,8 +120,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onBackPressed() {
         Fragment fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
-        int numeroFragments = getSupportFragmentManager().getFragments().size();
-
         if (!(fragmentActual instanceof FragmentLigas)) {
             if ((fragmentActual instanceof FragmentNoticias)) {
                 swipeRefreshLayout.setEnabled(true);
@@ -212,32 +227,45 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==logoutButton.getId()){
+        if (v.getId() == logoutButton.getId()) {
             logout();
             Intent loginActivity = new Intent(this, LoginActivity.class);
-            startActivityForResult(loginActivity,102);
+            startActivityForResult(loginActivity, 102);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==102){
+        if (requestCode == 102) {
             finish();
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        tabs.setVisibility(View.GONE);
         switch (item.getItemId()) {
             case R.id.todasLigas:
 
                 break;
             case R.id.modificarFavoritos:
-                cargarFragment(new FragmentElegirLigasFavoritas(this,email));
+                if (!email.equalsIgnoreCase("invitado")) {
+                    if (fragmentElegirLigas == null)
+                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas);
+                    cargarFragment(fragmentElegirLigas);
+                }else Toast.makeText(this, "No puedes tener ligas favoritas guardadas.\nPor favor inicia sesión", Toast.LENGTH_LONG).show();
                 break;
         }
 
         return true;
+    }
+
+    public static void setTodasLigas(List<Liga> ligas) {
+        todasLigas = ligas;
+    }
+
+    public static List<Liga> getTodasLigas() {
+        return todasLigas;
     }
 }

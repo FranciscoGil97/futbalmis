@@ -40,8 +40,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,38 +65,46 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
     List<Integer> ligasSeleccionada = new ArrayList<>();
     String ligasFavoritasString = "", prueba;
 
-    public FragmentElegirLigasFavoritas(Context context, String email) {
+    public FragmentElegirLigasFavoritas(Context context, String email, List<Liga> ligas) {
+        if (ligas.size() == 0) {
+            try {
+                ExecutorService es = Executors.newSingleThreadExecutor();
+                Future<ArrayList<Liga>> result = es.submit(new LigasCallable(true));
+                ligas = result.get();
+                Log.e("Intancia List", "");
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         this.context = context;
 
-//        this.email = email;
-        this.email = "fj.gil16@iesdoctorbalmis.com";
+        this.email = email;
+//        this.email = "fj.gil16@iesdoctorbalmis.com";
 
-        db.collection("users").get().addOnCompleteListener(task -> {
-            for (DocumentSnapshot document : task.getResult()) {
-                Log.e("DOCUMENTO", document.getId() + " => " + document.getData());
-            }
-        });
         db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                ligasFavoritasString = task.getResult().getData().get("ligasFavoritas").toString();
-                ligasFavoritasString = ligasFavoritasString.replace('[', ' ');
-                ligasFavoritasString = ligasFavoritasString.replace(']', ' ');
-                ligasFavoritasString = ligasFavoritasString.replaceAll(" ", "");
-                List<String> aux = Arrays.asList(ligasFavoritasString.split(","));
-                aux.forEach(s -> ligasSeleccionada.add(Integer.parseInt(s)));
+                if (task.getResult().exists()) {
+                    ligasFavoritasString = task.getResult().getData().get("ligasFavoritas").toString();
+                    ligasFavoritasString = ligasFavoritasString.replace('[', ' ');
+                    ligasFavoritasString = ligasFavoritasString.replace(']', ' ');
+                    ligasFavoritasString = ligasFavoritasString.replaceAll(" ", "");
+                    if (ligasFavoritasString.length() > 0) {
 
+                        List<String> aux = Arrays.asList(ligasFavoritasString.split(","));
+                        aux.forEach(s -> ligasSeleccionada.add(Integer.parseInt(s)));
+                        Log.e("DOCUMENTO2", ligasFavoritasString);
+                        if (listAdapter != null) {
+                            listAdapter.setIdLigasSeleccionadas(ligasSeleccionada);
+                            listAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
             }
+
         });
         Log.e("prueba ", (prueba == null) + "");
-        try {
-            ExecutorService es = Executors.newSingleThreadExecutor();
-            Future<ArrayList<Liga>> result = es.submit(new LigasCallable());
-            ligas = result.get();
-            listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context, ligasSeleccionada);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context, ligasSeleccionada);
     }
 
     @Nullable
@@ -117,19 +128,29 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
         listAdapter.notifyDataSetChanged();
     }
 
+
+    List<Integer> idLigasSeleccionas = new ArrayList<>();
+
     @Override
     public void onClick(View v) {
         List<Liga> ligasSeleccionadas = listAdapter.getLigasSeleccionadas();
-        List<Integer> idLigasSeleccionas = new ArrayList<>();
+        System.out.println("Numero ligas antes de insertar" + ligasSeleccionadas.size());
         ligasSeleccionadas.forEach(liga -> idLigasSeleccionas.add(liga.getId()));
-
         //Guardar en la base de datos las ligas
+//        Set<Integer> idsSinRepetir = new HashSet<>(idLigasSeleccionas);
+//        idsSinRepetir.iterator();
         HashMap<String, Object> datos = new HashMap<>();
         datos.put("ligasFavoritas", idLigasSeleccionas);
+        System.out.println("Datos a insertar " + datos.size());
+        db.collection("users").document(email).delete();
         db.collection("users").document(email).set(datos);
 
-        Intent elegirLigas = new Intent(context, MainActivity.class);
-        startActivityForResult(elegirLigas, MAINACTIVITY_CODE);
+        if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas)
+            getActivity().onBackPressed();
+        else {
+            Intent mainActivity = new Intent(context, MainActivity.class);
+            startActivityForResult(mainActivity, MAINACTIVITY_CODE);
+        }
     }
 
     @Override

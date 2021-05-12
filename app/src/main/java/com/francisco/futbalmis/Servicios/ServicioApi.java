@@ -18,6 +18,7 @@ import com.francisco.futbalmis.MainActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -82,6 +83,30 @@ public class ServicioApi {
             @Override
             public void onResponse(@NonNull Call<ArrayList<Liga>> call, @NonNull Response<ArrayList<Liga>> response) {
                 ligas = new ArrayList<>(response.body());
+                MainActivity.setTodasLigas(ligas);
+//                FragmentElegirLigasFavoritas.setData(ligas);
+            }
+            @Override
+            public void onFailure(@NonNull Call<ArrayList<Liga>> call, @NonNull Throwable t) {
+                Log.e("ERROR OBTENER LIGAS: ", t.getMessage());
+            }
+        });
+        return ligas;
+    }
+
+    public static ArrayList<Liga> getLigasLogin() throws IOException {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URLBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        IServicioApi servicio = retrofit.create(IServicioApi.class);
+
+        Call<ArrayList<Liga>> _ligas = servicio.getLigas();
+
+        _ligas.enqueue(new Callback<ArrayList<Liga>>() {
+            @Override
+            public void onResponse(@NonNull Call<ArrayList<Liga>> call, @NonNull Response<ArrayList<Liga>> response) {
+                ligas = new ArrayList<>(response.body());
                 FragmentElegirLigasFavoritas.setData(ligas);
             }
             @Override
@@ -91,6 +116,7 @@ public class ServicioApi {
         });
         return ligas;
     }
+
 
     public static ArrayList<Partido> getPartidosFechaLiga(Fecha fecha, int idLiga) {
         Retrofit retrofit = new Retrofit.Builder()

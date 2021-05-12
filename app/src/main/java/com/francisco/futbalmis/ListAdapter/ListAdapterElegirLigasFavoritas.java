@@ -1,6 +1,7 @@
 package com.francisco.futbalmis.ListAdapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.R;
 import com.francisco.futbalmis.Servicios.Utils;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,24 +26,16 @@ public class ListAdapterElegirLigasFavoritas extends RecyclerView.Adapter<ListAd
     private LayoutInflater mInflater;
     private Context context;
     private List<Liga> ligasSeleccionadas;
-    List<Integer> idLigasSeleccionadas;
-//    Map<Integer, Liga> ligas;
+    private List<Integer> idLigasSeleccionadas;
 
-    public ListAdapterElegirLigasFavoritas(ArrayList<Liga> itemList, Context context, List<Integer> idLigasSeleccionadas) {
+    public ListAdapterElegirLigasFavoritas(List<Liga> itemList, Context context, List<Integer> idLigasSeleccionadas) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = itemList;
         ligasSeleccionadas = new ArrayList<>();
-//        ligas = new HashMap<>();
+
         this.idLigasSeleccionadas = idLigasSeleccionadas;
-
-//        if (!mData.isEmpty())
-//            rellenaMap(mData);
     }
-
-//    private void rellenaMap(List<Liga> ligas) {
-//        ligas.forEach(liga -> this.ligas.put(liga.getId(), liga));
-//    }
 
     @Override
     public int getItemCount() {
@@ -49,8 +43,6 @@ public class ListAdapterElegirLigasFavoritas extends RecyclerView.Adapter<ListAd
     }
 
     public void setData(List<Liga> ligas) {
-//        if (mData.isEmpty())
-//            rellenaMap(ligas);
         mData = ligas;
     }
 
@@ -64,6 +56,10 @@ public class ListAdapterElegirLigasFavoritas extends RecyclerView.Adapter<ListAd
     @Override
     public void onBindViewHolder(final Holder holder, final int position) {
         holder.bindData(mData.get(position), position);
+    }
+
+    public void setIdLigasSeleccionadas(List<Integer> idLigasSeleccionadas) {
+        this.idLigasSeleccionadas = idLigasSeleccionadas;
     }
 
     public List<Liga> getData() {
@@ -96,20 +92,27 @@ public class ListAdapterElegirLigasFavoritas extends RecyclerView.Adapter<ListAd
             pais.setText(item.getPais().concat(":"));
             Utils.fetchSvg(context, item.getBanderaURL(), bandera);
 
-            if (idLigasSeleccionadas.contains(item.getId()))
+            if (idLigasSeleccionadas.contains(item.getId())){
+                if(!ligasSeleccionadas.contains(item))
+                    ligasSeleccionadas.add(item);
                 ligaElegida.setImageResource(R.drawable.favorito_seleccionado);
+                System.out.println("Numero de ligas seleccionadas  "+ligasSeleccionadas.size()+"    "+idLigasSeleccionadas.size());
+            }
 
         }
 
         @Override
         public void onClick(View v) {
+            System.out.println("CLICK");
             Liga liga = mData.get(getAdapterPosition());
             if (ligasSeleccionadas.contains(liga)) {
                 ligasSeleccionadas.remove(liga);
                 ligaElegida.setImageResource(R.drawable.favorito_no_seleccionado);
+                System.out.println("ELIMINA");
             } else {
                 ligasSeleccionadas.add(liga);
                 ligaElegida.setImageResource(R.drawable.favorito_seleccionado);
+                System.out.println("AÑADE");
             }
         }
     }
