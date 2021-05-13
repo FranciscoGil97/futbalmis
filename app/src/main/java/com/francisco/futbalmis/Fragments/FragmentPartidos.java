@@ -62,6 +62,8 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
             e.printStackTrace();
         }
         listAdapter = new ListAdapterPartidos(partidos, context);
+        listAdapter.setData(new ArrayList<>());
+        listAdapter.notifyDataSetChanged();
     }
 
     @Nullable
@@ -78,7 +80,7 @@ public class FragmentPartidos extends Fragment implements View.OnClickListener, 
         FT = getActivity().getSupportFragmentManager().beginTransaction();
 
         Utils.fetchSvg(context, ligaPartido.getBanderaURL(), banderaPaisLiga);
-        paisLiga.setText(ligaPartido.getPais() + ":");
+        paisLiga.setText(ligaPartido.getPais().concat(":"));
         nombreLiga.setText(ligaPartido.getNombre());
 
         liga.setOnClickListener(this);

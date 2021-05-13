@@ -50,6 +50,8 @@ public class FragmentPartidosEquipo extends Fragment {
             e.printStackTrace();
         }
         listAdapter = new ListAdapterPartidos(partidos,context,true);
+        listAdapter.setData(new ArrayList<>());
+        listAdapter.notifyDataSetChanged();
     }
 
     @Nullable

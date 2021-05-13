@@ -17,13 +17,13 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:background="@color/primary_dark"
         android:textColor="@color/black"
+        android:textIsSelectable="true"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imagenNoticiaCompleta"
-        android:textIsSelectable="true"
-        android:background="@color/primary_dark"/>
+        app:layout_constraintTop_toBottomOf="@id/imagenNoticiaCompleta" />
 
     <LinearLayout
         android:id="@+id/contenedorFecha"
@@ -38,6 +38,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
             android:text="Publicado: "
             android:textColor="@color/black" />
 
@@ -45,18 +47,21 @@
             android:id="@+id/fechaPublicacionNoticiaCompleta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
             android:textColor="#FF3535"
             android:textStyle="bold" />
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="2dp"
-        app:layout_constraintTop_toBottomOf="@id/contenedorFecha"
-        android:background="@color/black"/>
+        android:background="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/contenedorFecha" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="480dp"
+        android:layout_height="450dp"
         app:layout_constraintTop_toBottomOf="@id/contenedorFecha">
 
         <TextView
@@ -64,10 +69,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="9dp"
+            android:layout_marginRight="8dp"
             android:textColor="@color/black"
-            android:textIsSelectable="true"/>
+            android:textIsSelectable="true" />
     </ScrollView>
 
 

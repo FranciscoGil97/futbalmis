@@ -61,6 +61,8 @@ public class FragmentTodosPartidosLiga extends Fragment implements View.OnClickL
             e.printStackTrace();
         }
         listAdapter = new ListAdapterPartidos(partidos, context,true);
+        listAdapter.setData(new ArrayList<>());
+        listAdapter.notifyDataSetChanged();
     }
 
     @Nullable

@@ -59,31 +59,6 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
         this.context = context;
         this.email = email;
         this.ligasSeleccionada = ligasSeleccionada;
-
-//        this.email = "fj.gil16@iesdoctorbalmis.com";
-
-//        db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.getResult().exists()) {
-//                    ligasFavoritasString = task.getResult().getData().get("ligasFavoritas").toString();
-//                    ligasFavoritasString = ligasFavoritasString.replace('[', ' ');
-//                    ligasFavoritasString = ligasFavoritasString.replace(']', ' ');
-//                    ligasFavoritasString = ligasFavoritasString.replaceAll(" ", "");
-//                    if (ligasFavoritasString.length() > 0) {
-//
-//                        List<String> aux = Arrays.asList(ligasFavoritasString.split(","));
-//                        aux.forEach(s -> ligasSeleccionada.add(Integer.parseInt(s)));
-//                        Log.e("DOCUMENTO2", ligasFavoritasString);
-//                        if (listAdapter != null) {
-//                            listAdapter.setIdLigasSeleccionadas(ligasSeleccionada);
-//                            listAdapter.notifyDataSetChanged();
-//                        }
-//                    }
-//                }
-//            }
-//
-//        });
         listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context, ligasSeleccionada);
     }
 
@@ -125,6 +100,7 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
 
         if (getActivity().getSupportFragmentManager().getFragments().size() > 1) {
             if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas)
+                MainActivity.asignaLigasFavoritas();
                 getActivity().onBackPressed();
         } else {
             Intent mainActivity = new Intent(context, MainActivity.class);
