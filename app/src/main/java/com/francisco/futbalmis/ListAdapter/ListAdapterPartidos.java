@@ -89,8 +89,6 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
                     resultadoEquipoVisitante.setText(item.getResultadoEquipoVisitate());
                 }
                 if (item.getEstadoPartido().equals("JUGANDO")) {
-//                    estadoPartido.setText(Utils.getMinutos(Utils.parseDate(item.getFechaPartido() + " " + item.getHoraPartido())));
-
                     estadoPartido.setTextColor(Color.YELLOW);
                     resultadoEquipoLocal.setTextColor(Color.YELLOW);
                     resultadoEquipoVisitante.setTextColor(Color.YELLOW);
@@ -108,23 +106,7 @@ public class ListAdapterPartidos extends RecyclerView.Adapter<ListAdapterPartido
                     resultadoEquipoVisitante.setText("");
                     horaPartido.setText(fechaPartido.fechaPartido()+" "+item.getHoraPartido().substring(0, 5));
                 }
-
             }
-
-//            if (item.getResultadoEquipoLocal().equals("null")) {
-//                if (!sonPartidosUnSoloEquipo)
-//                    horaPartido.setText(item.getHoraPartido().substring(0, 5));
-//                resultadoEquipoLocal.setText("");
-//                resultadoEquipoVisitante.setText("");
-//            } else {
-//                resultadoEquipoLocal.setText(item.getResultadoEquipoLocal());
-//                resultadoEquipoVisitante.setText(item.getResultadoEquipoVisitate());
-//                if(item.getEstadoPartido().equals("JUGANDO") ||item.getEstadoPartido().equals("DESCANSO")){
-//                    estadoPartido.setTextColor(Color.RED);
-//                    resultadoEquipoLocal.setTextColor(Color.RED);
-//                    resultadoEquipoVisitante.setTextColor(Color.RED);
-//                }
-//            }
 
             Utils.fetchSvg(context, item.getEquipoLocal().getURLEscudo(), escudoEquipoLocal);
             Utils.fetchSvg(context, item.getEquipoVisitante().getURLEscudo(), escudoEquipoVisitante);

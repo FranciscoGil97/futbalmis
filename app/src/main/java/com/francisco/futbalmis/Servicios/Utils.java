@@ -233,6 +233,7 @@ public class Utils {
     }
 
     public static void getLigasFavoritas(String email, List<Integer> ligasFavoritas){
+        ligasFavoritas.clear();
         db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -252,5 +253,4 @@ public class Utils {
 
         });
     }
-
 }

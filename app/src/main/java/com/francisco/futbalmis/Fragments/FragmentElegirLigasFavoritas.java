@@ -22,9 +22,13 @@ import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,7 +44,7 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
     String email;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    List<Integer> ligasSeleccionada = new ArrayList<>();
+    List<Integer> idLigasSeleccionas = new ArrayList<>();
 //    String ligasFavoritasString = "";
 
     private final int MAINACTIVITY_CODE = 101;
@@ -58,7 +62,6 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
         }
         this.context = context;
         this.email = email;
-        this.ligasSeleccionada = ligasSeleccionada;
         listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context, ligasSeleccionada);
     }
 
@@ -83,14 +86,18 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
         listAdapter.notifyDataSetChanged();
     }
 
-
-    List<Integer> idLigasSeleccionas = new ArrayList<>();
-
     @Override
     public void onClick(View v) {
+        idLigasSeleccionas.clear();
         List<Liga> ligasSeleccionadas = listAdapter.getLigasSeleccionadas();
         System.out.println("Numero ligas antes de insertar" + ligasSeleccionadas.size());
         ligasSeleccionadas.forEach(liga -> idLigasSeleccionas.add(liga.getId()));
+
+        Set<Integer> set = new HashSet<>(idLigasSeleccionas);
+        idLigasSeleccionas.clear();
+        idLigasSeleccionas.addAll(set);
+
+
         //Guardar en la base de datos las ligas
         HashMap<String, Object> datos = new HashMap<>();
         datos.put("ligasFavoritas", idLigasSeleccionas);
@@ -100,6 +107,7 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
 
         if (getActivity().getSupportFragmentManager().getFragments().size() > 1) {
             if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas)
+                FragmentLigas.actualizaVista(idLigasSeleccionas);
                 MainActivity.asignaLigasFavoritas();
                 getActivity().onBackPressed();
         } else {

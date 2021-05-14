@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
         SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
         email = prefs.getString("email", null);
+        asignaLigasFavoritas();
         urlFoto = prefs.getString("foto", null);
         gestionaInicio();
-        asignaLigasFavoritas();
 
     }
 
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         cambiaVisibilidadProgressBar(View.VISIBLE);
 
         FT = getSupportFragmentManager().beginTransaction();
-        fragmentLigas = new FragmentLigas(this, FT, Utils.getFecha(0));
+        fragmentLigas = new FragmentLigas(this, FT, Utils.getFecha(0),ligasSeleccionada);
         cargarFragment(fragmentLigas);
 
         fragmentNoticias = new FragmentNoticias(this, getSupportFragmentManager().beginTransaction(), URL_NOTICIAS);
