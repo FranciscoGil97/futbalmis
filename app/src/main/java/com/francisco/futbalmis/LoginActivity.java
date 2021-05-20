@@ -133,8 +133,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     });
 
                 }
-
-
             } catch (ApiException ex) {
                 System.err.println(ex.getMessage());
                 showAlert();

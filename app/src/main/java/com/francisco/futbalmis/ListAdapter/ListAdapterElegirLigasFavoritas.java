@@ -88,15 +88,18 @@ public class ListAdapterElegirLigasFavoritas extends RecyclerView.Adapter<ListAd
         }
 
         void bindData(final Liga item, int i) {
-            nombre.setText(item.getNombre());
-            pais.setText(item.getPais().concat(":"));
-            Utils.fetchSvg(context, item.getBanderaURL(), bandera);
+            if (item != null) {
+                nombre.setText(item.getNombre());
+                pais.setText(item.getPais()+":");
+                if(item.getBanderaURL()!=null)
+                    Utils.fetchSvg(context, item.getBanderaURL(), bandera);
 
-            if (idLigasSeleccionadas.contains(item.getId())){
-                if(!ligasSeleccionadas.contains(item))
-                    ligasSeleccionadas.add(item);
-                ligaElegida.setImageResource(R.drawable.favorito_seleccionado);
-                System.out.println("Numero de ligas seleccionadas  "+ligasSeleccionadas.size()+"    "+idLigasSeleccionadas.size());
+                if (idLigasSeleccionadas.contains(item.getId())) {
+                    if (!ligasSeleccionadas.contains(item))
+                        ligasSeleccionadas.add(item);
+                    ligaElegida.setImageResource(R.drawable.favorito_seleccionado);
+                    System.out.println("Numero de ligas seleccionadas  " + ligasSeleccionadas.size() + "    " + idLigasSeleccionadas.size());
+                }
             }
 
         }

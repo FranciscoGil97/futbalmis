@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Futbalmis);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         fragmentNoticias = new FragmentNoticias(this, getSupportFragmentManager().beginTransaction(), URL_NOTICIAS);
         swipeRefreshLayout.setOnRefreshListener(this);
-        setTheme(R.style.Theme_Futbalmis);
+
     }
 
 
@@ -241,6 +242,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onClick(View v) {
         if (v.getId() == logoutButton.getId()) {
             logout();
+
+            Fragment fragmentActual;
+            do{
+                desapilaFragment();
+                fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+            }while(!(fragmentActual instanceof FragmentLigas));
+
             Intent loginActivity = new Intent(this, LoginActivity.class);
             startActivityForResult(loginActivity, 102);
         }
