@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private Date fechaUltimaActualizacion = null;
     static TabLayout tabs;
     int tabActual = 0;
-    private final String URL_NOTICIAS = "https://as.com/rss/futbol/portada.xml";
+
     private static List<Liga> todasLigas = new ArrayList<>();
     TabLayout.Tab[] tabArray;
     Button logoutButton;
@@ -74,10 +74,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
         SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
         email = prefs.getString("email", null);
-        asignaLigasFavoritas();
         urlFoto = prefs.getString("foto", null);
-        gestionaInicio();
 
+        //obtengo las ligas favoritas del usuario
+        asignaLigasFavoritas();
+
+        gestionaInicio();
     }
 
     private void gestionaInicio() {
@@ -96,9 +98,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         logoutButton.setOnClickListener(this);
         navigationView = findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
-        emailUsuario = header.findViewById(R.id.emailUsuario);
-        imagenUsuario = header.findViewById(R.id.imagenUsuario);
+        View cabeceraNavigationView = navigationView.getHeaderView(0);
+        emailUsuario = cabeceraNavigationView.findViewById(R.id.emailUsuario);
+        imagenUsuario = cabeceraNavigationView.findViewById(R.id.imagenUsuario);
         emailUsuario.setText(email);
         if (urlFoto != null) {
             Picasso.get().load(urlFoto).into(imagenUsuario);
@@ -106,8 +108,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         swipeRefreshLayout.setDistanceToTriggerSync(500);
         tabs = findViewById(R.id.tab_layout);
-        tabArray = new TabLayout.Tab[]{tabs.newTab().setText("Partidos").setIcon(R.drawable.partidos),
-                tabs.newTab().setText("Noticias").setIcon(R.drawable.noticias)};
+        //Creo las tabs que tiene la app
+        tabArray = new TabLayout.Tab[]{
+                tabs.newTab().setText("Partidos").setIcon(R.drawable.partidos),
+                tabs.newTab().setText("Noticias").setIcon(R.drawable.noticias)
+        };
         tabs.addTab(tabArray[0]);
         tabs.addTab(tabArray[1]);
 
@@ -115,24 +120,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         cambiaVisibilidadProgressBar(View.VISIBLE);
 
         FT = getSupportFragmentManager().beginTransaction();
-        fragmentLigas = new FragmentLigas(this, FT, Utils.getFecha(0),ligasSeleccionada);
+        fragmentLigas = new FragmentLigas(this, FT, Utils.getFecha(0), ligasSeleccionada);
         cargarFragment(fragmentLigas);
 
-        fragmentNoticias = new FragmentNoticias(this, getSupportFragmentManager().beginTransaction(), URL_NOTICIAS);
+        fragmentNoticias = new FragmentNoticias(this, getSupportFragmentManager().beginTransaction());
         swipeRefreshLayout.setOnRefreshListener(this);
-
     }
 
 
     @Override
     public void onBackPressed() {
         Fragment fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
-        if (getSupportFragmentManager().getFragments().size() > 1)
+
+        if (!getSupportFragmentManager().getFragments().isEmpty())
             if (getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas) {
                 swipeRefreshLayout.setEnabled(true);
                 tabs.setVisibility(View.VISIBLE);
             }
 
+        //gestionar visibilidades y el comportamiento de algunos componentes
         if (!(fragmentActual instanceof FragmentLigas)) {
             if ((fragmentActual instanceof FragmentNoticias)) {
                 swipeRefreshLayout.setEnabled(true);
@@ -140,16 +146,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
             if (fragmentActual instanceof FragmentPartidos)
                 cambiaVisibilidadTabLayout(View.VISIBLE);
-            if (!(fragmentActual instanceof FragmentPartidos))
-                cambiaVisibilidadProgressBar(View.GONE);
+//            if (!(fragmentActual instanceof FragmentPartidos))
+            cambiaVisibilidadProgressBar(View.GONE);
             desapilaFragment();
-        } else {
-            try {
-                finish();
-            } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-            }
-        }
+        } else finish();
+
     }
 
     @Override
@@ -179,19 +180,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void gestionaActualizacionPartidosOnRefresh() {
+        //Actualiza los partidos que se juegan hoy
+        //pero solo se puede actualizar cada 1.5 minutos
         if (fechaUltimaActualizacion == null) {
             fechaUltimaActualizacion = new Date();
             ServicioApi.actualizaPartidosHoy();
             Log.e("Swipe", "Se actualiza primero");
         } else {
             long intervaloActualizacion = new Date().getTime() - fechaUltimaActualizacion.getTime();
-            if (TimeUnit.MILLISECONDS.toMinutes(intervaloActualizacion) >= 1f) {
+            if (TimeUnit.MILLISECONDS.toMinutes(intervaloActualizacion) >= 1.5f) {
                 ServicioApi.actualizaPartidosHoy();
                 fechaUltimaActualizacion = new Date();
-                Log.e("Swipe", "Se actualiza ha pasado 1 minutos");
             } else {
                 cambiaVisibilidadSwipeRefresh();
-                Log.e("Swipe", "No se actualiza");
             }
         }
     }
@@ -199,13 +200,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         if (tabActual != tab.getPosition()) {
-            if (tab.getText().toString().equalsIgnoreCase("noticias")) {//significa que antes estaba en partidos
+            if (tab.getText().toString().equalsIgnoreCase("noticias")) {
+                //significa que antes estaba en partidos
                 if (!getSupportFragmentManager().getFragments().contains(fragmentNoticias))
                     cargarFragment(fragmentNoticias);
                 swipeRefreshLayout.setEnabled(false);
             } else {
                 swipeRefreshLayout.setEnabled(true);
                 if ((getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentNoticiasCompleta)) {
+                    //esto es para que cuando estemos en la noticia completa pero le damos a la opcion de "partidos" vaya al fragmentLigas
                     for (int i = 2; i > 0; i--) {
                         FT = getSupportFragmentManager().beginTransaction();
                         FT.remove(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - i)).commit();
@@ -244,10 +247,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             logout();
 
             Fragment fragmentActual;
-            do{
+            do {
                 desapilaFragment();
                 fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
-            }while(!(fragmentActual instanceof FragmentLigas));
+            } while (!(fragmentActual instanceof FragmentLigas));
 
             Intent loginActivity = new Intent(this, LoginActivity.class);
             startActivityForResult(loginActivity, 102);
@@ -276,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             case R.id.modificarFavoritos:
                 if (!email.equalsIgnoreCase("invitado")) {
                     if (fragmentElegirLigas == null)
-                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas, ligasSeleccionada,false);
+                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas, ligasSeleccionada, false);
                     if (!(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentElegirLigasFavoritas))
                         cargarFragment(fragmentElegirLigas);
                 } else

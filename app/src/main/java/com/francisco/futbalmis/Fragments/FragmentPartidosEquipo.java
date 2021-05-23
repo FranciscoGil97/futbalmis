@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.francisco.futbalmis.Clases.Equipo;
 import com.francisco.futbalmis.Clases.Partido;
 import com.francisco.futbalmis.Hilos.PartidosEquipoCallable;
-import com.francisco.futbalmis.ListAdapter.ListAdapterClasificacion;
 import com.francisco.futbalmis.ListAdapter.ListAdapterPartidos;
 import com.francisco.futbalmis.R;
 import com.francisco.futbalmis.Servicios.Utils;

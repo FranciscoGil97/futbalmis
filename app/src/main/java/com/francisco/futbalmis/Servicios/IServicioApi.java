@@ -35,7 +35,4 @@ public interface IServicioApi {
 
     @PUT("partidos/actualizahoy")
     Call<String> actualizaPartidosHoy();
-
-    @PUT("partidos/actualiza")
-    Call<String> actualizaPartidos();
 }

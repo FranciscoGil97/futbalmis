@@ -262,38 +262,4 @@ public class ServicioApi {
             }
         });
     }
-
-    public static void actualizaPartidos() {
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(3, TimeUnit.MINUTES)
-                .connectTimeout(3, TimeUnit.MINUTES)
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URLBase)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-        IServicioApi servicio = retrofit.create(IServicioApi.class);
-
-        Call<String> mensaje = servicio.actualizaPartidos();
-
-        mensaje.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if (response.isSuccessful()) {
-                    Log.e("Partidos actualizados", "Partidos actualizados");
-                } else
-                    Log.e("Partidos actualizados", "Algo ha pasado " + response.code());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                Log.e("ERROR ACTUALIZAR PARTIDOS: ", t.getMessage());
-            }
-        });
-    }
-
-
 }

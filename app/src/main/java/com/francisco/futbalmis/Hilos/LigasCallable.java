@@ -16,6 +16,7 @@ public class LigasCallable implements Callable<ArrayList<Liga>> {
 
     @Override
     public ArrayList<Liga> call() throws IOException {
+        //se llama a una o a otra para que sepa cuando abtenga los datos donde llamar para que se rellene el ListAdapter
         if(vieneDeLogin) return ServicioApi.getLigasLogin();
         else return ServicioApi.getLigas();
     }

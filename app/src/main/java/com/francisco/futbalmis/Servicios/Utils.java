@@ -31,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +48,7 @@ public class Utils {
 
     public static String ligasFavoritasString = "";
 
+    //carga una imagen en formato svg en un imageView
     public static void fetchSvg(Context context, String url, final ImageView target) {
         if (httpClient == null) {
             httpClient = new OkHttpClient.Builder()
@@ -56,19 +56,16 @@ public class Utils {
                     .build();
         }
 
-        // here we are making HTTP call to fetch data from URL.
+
         Request request = new Request.Builder().url(url).build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                // we are adding a default image if we gets any error.
                 target.setImageResource(R.drawable.ic_launcher_background);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                // sharp is a library which will load stream which we generated
-                // from url in our target imageview.
                 InputStream stream = response.body().byteStream();
                 Sharp.loadInputStream(stream).into(target);
                 stream.close();
@@ -142,22 +139,25 @@ public class Utils {
         return date;
     }
 
-    public static String getMinutos(Date fechPartido) {
-        String minutos = "";
-        Date fechaActual = new Date();
-        int tiempoDescanso = 15; //parece que en algunas ligas es de 20 minutos(italia, portugal y...)
+    //Este metodo es para que cuando un partido se este jugando salga por el minuto que estan
+    //se comenta porque no funcionaba corecto
+//    public static String getMinutos(Date fechPartido) {
+//        String minutos = "";
+//        Date fechaActual = new Date();
+//        int tiempoDescanso = 15; //parece que en algunas ligas es de 20 minutos(italia, portugal y...)
+//
+//        long diferenciaMinutos = TimeUnit.MILLISECONDS.toMinutes(fechaActual.getTime() - fechPartido.getTime());
+//        minutos = diferenciaMinutos + "'";
+//        if (diferenciaMinutos > 45 && diferenciaMinutos < 48)
+//            minutos = "45+" + (diferenciaMinutos - 45) + "'";
+//        if (diferenciaMinutos >= 60)
+//            minutos = (diferenciaMinutos - tiempoDescanso) + "'";
+//        if (diferenciaMinutos > 90)
+//            minutos = "90+" + (diferenciaMinutos - 90 - tiempoDescanso) + "'";
+//        return minutos;
+//    }
 
-        long diferenciaMinutos = TimeUnit.MILLISECONDS.toMinutes(fechaActual.getTime() - fechPartido.getTime());
-        minutos = diferenciaMinutos + "'";
-        if (diferenciaMinutos > 45 && diferenciaMinutos < 48)
-            minutos = "45+" + (diferenciaMinutos - 45) + "'";
-        if (diferenciaMinutos >= 60)
-            minutos = (diferenciaMinutos - tiempoDescanso) + "'";
-        if (diferenciaMinutos > 90)
-            minutos = "90+" + (diferenciaMinutos - 90 - tiempoDescanso) + "'";
-        return minutos;
-    }
-
+    //obtiene la fecha del XML de las noticias
     public static Fecha obtenFechaXml(String fechaString) {
         try {
             Pattern patronFecha = Pattern.compile("\\s(?<dia>([0-9])|([1-2][0-9])|(3[0-1]))\\s(?<mes>[A-Z][a-z]{2})\\s(?<year>20\\d{2})");
@@ -173,11 +173,9 @@ public class Utils {
                 if (posicionMes > 0)
                     mesNumero = addCeroDigitoFecha(++posicionMes);
 
-                dia=addCeroDigitoFecha(Integer.parseInt(dia));
+                dia = addCeroDigitoFecha(Integer.parseInt(dia));
 
-
-
-                return new Fecha(dia,mesNumero,year,"");
+                return new Fecha(dia, mesNumero, year, "");
             } else return null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -232,7 +230,7 @@ public class Utils {
         return noticias;
     }
 
-    public static void getLigasFavoritas(String email, List<Integer> ligasFavoritas){
+    public static void getLigasFavoritas(String email, List<Integer> ligasFavoritas) {
         ligasFavoritas.clear();
         db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

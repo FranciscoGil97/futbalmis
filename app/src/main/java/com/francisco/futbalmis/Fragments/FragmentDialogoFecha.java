@@ -38,7 +38,9 @@ public class FragmentDialogoFecha extends DialogFragment {
     int itemSelected;
     public FragmentDialogoFecha(Context context,Fecha fechaDiaSeleccionado) {
         this.context = context;
+        //para que salga el item de "HOY" como seleccionado al principio
         itemSelected=7;
+        //rellenar la lista de fragments
         for (int i = 0; i <= 14; i++) {
             Fecha fecha = Utils.getFecha(i - 7);
             fechas.add(fecha);
@@ -74,6 +76,8 @@ public class FragmentDialogoFecha extends DialogFragment {
                 vuelveALigas();
                 MainActivity.cambiaVisibilidadProgressBar(View.VISIBLE);
                 Fecha fechaDiaSeleccionado = Utils.getFecha(position - Utils.DIAS_SEMANA);
+
+                //cambio el dia de los partidos y lanzo un hilo para que obtenga los partidos del dia seleccionado
                 FragmentLigas.setFecha(fechaDiaSeleccionado);
                 FragmentLigas.setData(new ArrayList<>());
                 ExecutorService es = Executors.newSingleThreadExecutor();

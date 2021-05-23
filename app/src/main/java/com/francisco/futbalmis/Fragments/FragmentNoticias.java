@@ -32,12 +32,13 @@ public class FragmentNoticias extends Fragment {
     private static ListAdapterNoticias listAdapter;
     private List<Noticia> noticias = new ArrayList<>();
     FragmentTransaction FT;
+    private String urlNoticias = "https://as.com/rss/futbol/portada.xml";
 
-    public FragmentNoticias(Context context, FragmentTransaction FT, String direccion) {
+    public FragmentNoticias(Context context, FragmentTransaction FT) {
         this.context = context;
         this.FT = FT;
         ExecutorService es = Executors.newSingleThreadExecutor();
-        Future<List<Noticia>> result = es.submit(new LectorRssCallable(direccion));
+        Future<List<Noticia>> result = es.submit(new LectorRssCallable(urlNoticias));
 
         listAdapter = new ListAdapterNoticias(context, noticias);
 
@@ -74,6 +75,10 @@ public class FragmentNoticias extends Fragment {
     public static void setData(List<Noticia> noticias) {
         listAdapter.setData(noticias);
         listAdapter.notifyDataSetChanged();
+    }
+
+    public void setUrlNoticias(String url){
+        urlNoticias=url;
     }
 
 }

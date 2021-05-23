@@ -3,7 +3,6 @@ package com.francisco.futbalmis.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,6 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
                 ExecutorService es = Executors.newSingleThreadExecutor();
                 Future<ArrayList<Liga>> result = es.submit(new LigasCallable(true));
                 ligas = result.get();
-                Log.e("Intancia List", "");
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }

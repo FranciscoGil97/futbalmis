@@ -3,7 +3,6 @@ package com.francisco.futbalmis.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,16 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Clases.Partido;
-import com.francisco.futbalmis.Hilos.PartidosCallable;
 import com.francisco.futbalmis.Hilos.TodosPartidosLigaCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterPartidos;
 import com.francisco.futbalmis.MainActivity;

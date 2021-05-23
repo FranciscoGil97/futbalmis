@@ -2,13 +2,11 @@ package com.francisco.futbalmis.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +20,6 @@ import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
 import com.francisco.futbalmis.Hilos.LigasFechaCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterLigas;
-import com.francisco.futbalmis.ListAdapter.ListAdapterPartidos;
 import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -140,7 +137,6 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
         FT = getActivity().getSupportFragmentManager().beginTransaction();
         FT.add(R.id.ligasFragment, f);
         FT.commit();
-        Log.e("Numero de fragment", getActivity().getSupportFragmentManager().getFragments().size() + "");
         FT = null;
     }
 
@@ -155,13 +151,14 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
     private static void rellenaListasLiga() {
         ligasFavoritas = new ArrayList<>();
         ligasNoFavoritas = new ArrayList<>();
-
+        //rellenar la listas de ligas favoritas y no favoritas
         ligas.forEach(liga -> {
             if (idLigasFavoritas.contains(liga.getId())) ligasFavoritas.add(liga);
             else ligasNoFavoritas.add(liga);
         });
     }
 
+    //A este método se le llama cuando se han cambiado las ligas favoritas
     public static void actualizaVista(List<Integer> idLigasFavoritasNuevas) {
         idLigasFavoritas = idLigasFavoritasNuevas;
         rellenaListasLiga();
@@ -169,13 +166,14 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
         listAdapterLigasNoFavoritas.setData(ligasNoFavoritas);
         listAdapterLigasFavoritas.notifyDataSetChanged();
         listAdapterLigasNoFavoritas.notifyDataSetChanged();
-        System.out.println("Actualiza vista\n Favoritas: " + ligasFavoritas.size() + "NO favoritas: " + ligasNoFavoritas.size());
         gestionaAlturaRecyclers();
     }
 
     private static void gestionaAlturaRecyclers() {
         ViewGroup.LayoutParams params;
-        if (ligas.size()>0 && ligas.get(0).getId() == -1) {
+        if (!ligas.isEmpty() && ligas.get(0).getId() == -1) {
+            //Si entra aqui
+            //significa que no hay partidos hoy
             recyclerViewLigasNoFavoritas.setVisibility(View.GONE);
             layoutLigasNoFavoritas.setVisibility(View.GONE);
             layoutLigasFavoritas.setVisibility(View.GONE);
@@ -183,26 +181,25 @@ public class FragmentLigas extends Fragment implements Toolbar.OnMenuItemClickLi
             listAdapterLigasFavoritas.setData(ligas);
             listAdapterLigasFavoritas.notifyDataSetChanged();
         } else {
-            if (ligasFavoritas.size() > 0) {
+            //gestionar la altura de los recyclers y su visibilidad
+            if (!ligasFavoritas.isEmpty()) {
                 recyclerViewLigasFavoritas.setVisibility(View.VISIBLE);
                 layoutLigasFavoritas.setVisibility(View.VISIBLE);
                 params = recyclerViewLigasFavoritas.getLayoutParams();
                 params.height = ALTURA_MINIMA_LIGA * ligasFavoritas.size();
                 recyclerViewLigasFavoritas.setLayoutParams(params);
             } else {
-                System.out.println("ligas favoritas no tiene elementos" + listAdapterLigasFavoritas.getData().size());
                 recyclerViewLigasFavoritas.setVisibility(View.GONE);
                 layoutLigasFavoritas.setVisibility(View.GONE);
             }
 
-            if (ligasNoFavoritas.size() > 0) {
+            if (!ligasNoFavoritas.isEmpty()) {
                 recyclerViewLigasNoFavoritas.setVisibility(View.VISIBLE);
                 layoutLigasNoFavoritas.setVisibility(View.VISIBLE);
                 params = recyclerViewLigasNoFavoritas.getLayoutParams();
                 params.height = ALTURA_MINIMA_LIGA * ligasNoFavoritas.size();
                 recyclerViewLigasNoFavoritas.setLayoutParams(params);
             } else {
-//            System.out.println("ligas NO favoritas no tiene elementos"+listAdapterLigasNoFavoritas.getData().size());
                 recyclerViewLigasNoFavoritas.setVisibility(View.GONE);
                 layoutLigasNoFavoritas.setVisibility(View.GONE);
             }

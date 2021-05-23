@@ -4,22 +4,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.francisco.futbalmis.Clases.Fecha;
 import com.francisco.futbalmis.Clases.Liga;
-import com.francisco.futbalmis.Hilos.LigasFechaCallable;
 import com.francisco.futbalmis.ListAdapter.ListAdapterLigas;
 import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
@@ -27,10 +22,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class FragmentTodasLigas extends Fragment{
     private View view;
@@ -67,7 +58,6 @@ public class FragmentTodasLigas extends Fragment{
                 FragmentTodosPartidosLiga fragmentPartidos = new FragmentTodosPartidosLiga(context, listAdapter.getData().get(position), getActivity().getSupportFragmentManager().beginTransaction());
                 cargarFragment(fragmentPartidos);
                 MainActivity.cambiaVisibilidadTabLayout(View.GONE);
-//                Toast.makeText(context, "Todos los partidos de la liga: "+listAdapter.getData().get(position).getNombre(), Toast.LENGTH_SHORT).show();
             }
         });
 

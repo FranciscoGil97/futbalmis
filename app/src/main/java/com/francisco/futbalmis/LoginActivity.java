@@ -33,10 +33,11 @@ import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     EditText email, password;
-    Button acceder, registrar, googleButton, invitadoButton;
+    Button acceder, registrar, invitadoButton;
+//    Button googleButton;
     LinearLayout auth;
     private FragmentTransaction FT;
-    private final int GOOGLE_SIGN_IN = 100;
+//    private final int GOOGLE_SIGN_IN = 100;
     private final int MAINACTIVITY_CODE = 101;
 
     @Override
@@ -49,12 +50,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         acceder = findViewById(R.id.accederButton);
         registrar = findViewById(R.id.registrarButton);
         auth = findViewById(R.id.authLayout);
-        googleButton = findViewById(R.id.googleButton);
+//        googleButton = findViewById(R.id.googleButton);
         invitadoButton = findViewById(R.id.invitadoButton);
 
         acceder.setOnClickListener(this);
         registrar.setOnClickListener(this);
-        googleButton.setOnClickListener(this);
+//        googleButton.setOnClickListener(this);
         invitadoButton.setOnClickListener(this);
 
         session();
@@ -86,15 +87,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
             }
-        } else if (v.getId() == googleButton.getId()) {
-            GoogleSignInOptions googleConf = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build();
-            GoogleSignInClient googleClient = GoogleSignIn.getClient(this, googleConf);
-            googleClient.signOut();
-            startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
-        } else if (v.getId() == invitadoButton.getId()) {
+        }
+//        else if (v.getId() == googleButton.getId()) {
+//            GoogleSignInOptions googleConf = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                    .requestIdToken(getString(R.string.default_web_client_id))
+//                    .requestEmail()
+//                    .build();
+//            GoogleSignInClient googleClient = GoogleSignIn.getClient(this, googleConf);
+//            googleClient.signOut();
+//            startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
+//        }
+        else if (v.getId() == invitadoButton.getId()) {
             guardaSesion("Invitado", null);
             irAMainActivity();
         }
@@ -104,36 +107,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == GOOGLE_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                boolean[] existe = {false};
-                db.collection("users").document(account.getEmail()).get().addOnSuccessListener(command -> {
-                    existe[0] = command.exists();
-                });
-                if (account != null) {
-                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(this, task1 -> {
-                        if (task1.isSuccessful()) {
-
-                                guardaSesion(task1.getResult().getUser().getEmail(), task1.getResult().getUser().getPhotoUrl().toString());
-
-                            if (existe[0])
-                                irAMainActivity();
-                            else elegirLigas(task1.getResult().getUser().getEmail());
-                        } else {
-                            showAlert();
-                        }
-                    });
-
-                }
-            } catch (ApiException ex) {
-                System.err.println(ex.getMessage());
-                showAlert();
-            }
-        } else if (requestCode == MAINACTIVITY_CODE) {
+//        if (requestCode == GOOGLE_SIGN_IN) {
+//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+//            try {
+//                GoogleSignInAccount account = task.getResult(ApiException.class);
+//                FirebaseFirestore db = FirebaseFirestore.getInstance();
+//                boolean[] existe = {false};
+//                db.collection("users").document(account.getEmail()).get().addOnSuccessListener(command -> {
+//                    existe[0] = command.exists();
+//                });
+//                if (account != null) {
+//                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+//                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(this, task1 -> {
+//                        if (task1.isSuccessful()) {
+//
+//                                guardaSesion(task1.getResult().getUser().getEmail(), task1.getResult().getUser().getPhotoUrl().toString());
+//
+//                            if (existe[0])
+//                                irAMainActivity();
+//                            else elegirLigas(task1.getResult().getUser().getEmail());
+//                        } else {
+//                            showAlert();
+//                        }
+//                    });
+//
+//                }
+//            } catch (ApiException ex) {
+//                System.err.println(ex.getMessage());
+//                showAlert();
+//            }
+//        } else
+        if (requestCode == MAINACTIVITY_CODE) {
             finish();
         }
     }
@@ -165,7 +169,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void irAMainActivity() {
-
         Intent mainActivity = new Intent(this, MainActivity.class);
         startActivityForResult(mainActivity, MAINACTIVITY_CODE);
     }
