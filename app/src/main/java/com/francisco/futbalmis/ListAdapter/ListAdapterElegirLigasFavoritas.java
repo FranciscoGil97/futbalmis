@@ -101,7 +101,6 @@ public class ListAdapterElegirLigasFavoritas extends RecyclerView.Adapter<ListAd
                     System.out.println("Numero de ligas seleccionadas  " + ligasSeleccionadas.size() + "    " + idLigasSeleccionadas.size());
                 }
             }
-
         }
 
         @Override

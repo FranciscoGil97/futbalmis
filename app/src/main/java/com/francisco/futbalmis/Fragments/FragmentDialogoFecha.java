@@ -63,7 +63,7 @@ public class FragmentDialogoFecha extends DialogFragment {
         });
 
         recyclerView = view.findViewById(R.id.recyclerFecha);
-        recyclerView.setHasFixedSize(true);
+//        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(listAdapter);
         FT = getActivity().getSupportFragmentManager().beginTransaction();

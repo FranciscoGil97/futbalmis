@@ -22,9 +22,7 @@ import com.francisco.futbalmis.MainActivity;
 import com.francisco.futbalmis.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,17 +37,15 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
     private Context context;
     private RecyclerView recyclerView;
     private static ListAdapterElegirLigasFavoritas listAdapter;
-    private ArrayList<Liga> ligas = new ArrayList<>();
     Button siguienteButton;
     String email;
-
+    boolean isLogin;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     List<Integer> idLigasSeleccionas = new ArrayList<>();
-//    String ligasFavoritasString = "";
 
     private final int MAINACTIVITY_CODE = 101;
 
-    public FragmentElegirLigasFavoritas(Context context, String email, List<Liga> ligas, List<Integer> ligasSeleccionada) {
+    public FragmentElegirLigasFavoritas(Context context, String email, List<Liga> ligas, List<Integer> ligasSeleccionada,boolean isLogin) {
         if (ligas.size() == 0) {
             try {
                 ExecutorService es = Executors.newSingleThreadExecutor();
@@ -60,6 +56,7 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
                 e.printStackTrace();
             }
         }
+        this.isLogin=isLogin;
         this.context = context;
         this.email = email;
         listAdapter = new ListAdapterElegirLigasFavoritas(ligas, context, ligasSeleccionada);
@@ -97,7 +94,6 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
         idLigasSeleccionas.clear();
         idLigasSeleccionas.addAll(set);
 
-
         //Guardar en la base de datos las ligas
         HashMap<String, Object> datos = new HashMap<>();
         datos.put("ligasFavoritas", idLigasSeleccionas);
@@ -105,7 +101,7 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
         db.collection("users").document(email).delete();
         db.collection("users").document(email).set(datos);
 
-        if (getActivity().getSupportFragmentManager().getFragments().size() > 1) {
+        if (!isLogin) {
             if (getActivity().getSupportFragmentManager().getFragments().get(getActivity().getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas)
                 FragmentLigas.actualizaVista(idLigasSeleccionas);
                 MainActivity.asignaLigasFavoritas();
@@ -119,7 +115,6 @@ public class FragmentElegirLigasFavoritas extends Fragment implements View.OnCli
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == MAINACTIVITY_CODE) getActivity().finish();
     }
 }

@@ -1,6 +1,5 @@
 package com.francisco.futbalmis.Clases;
 
-import java.util.Date;
 
 public class Noticia {
     private String titulo;

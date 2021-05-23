@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             case R.id.modificarFavoritos:
                 if (!email.equalsIgnoreCase("invitado")) {
                     if (fragmentElegirLigas == null)
-                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas, ligasSeleccionada);
+                        fragmentElegirLigas = new FragmentElegirLigasFavoritas(this, email, todasLigas, ligasSeleccionada,false);
                     if (!(getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1) instanceof FragmentElegirLigasFavoritas))
                         cargarFragment(fragmentElegirLigas);
                 } else

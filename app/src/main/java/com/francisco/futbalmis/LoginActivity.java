@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setTheme(R.style.Theme_Futbalmis);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        logout();
         email = findViewById(R.id.usernameEditText);
         password = findViewById(R.id.passwordEditText);
         acceder = findViewById(R.id.accederButton);
@@ -69,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (command.isSuccessful()) {
                         guardaSesion(command.getResult().getUser().getEmail(), null);
                         //mostrar ligas
-                        irAMainActivity(command.getResult().getUser().getEmail(), null);
+                        irAMainActivity();
                     } else {
                         showAlert();
                     }
@@ -97,7 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivityForResult(googleClient.getSignInIntent(), GOOGLE_SIGN_IN);
         } else if (v.getId() == invitadoButton.getId()) {
             guardaSesion("Invitado", null);
-            irAMainActivity("Invitado", null);
+            irAMainActivity();
         }
     }
 
@@ -106,7 +105,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GOOGLE_SIGN_IN) {
-
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -119,13 +117,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(this, task1 -> {
                         if (task1.isSuccessful()) {
-                            SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
-                            String email = prefs.getString("email", null);
-                            if (email == null)
+
                                 guardaSesion(task1.getResult().getUser().getEmail(), task1.getResult().getUser().getPhotoUrl().toString());
 
                             if (existe[0])
-                                irAMainActivity(task1.getResult().getUser().getEmail(), task1.getResult().getUser().getPhotoUrl().toString());
+                                irAMainActivity();
                             else elegirLigas(task1.getResult().getUser().getEmail());
                         } else {
                             showAlert();
@@ -145,14 +141,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void showAlert() {
         new AlertDialog.Builder(this)
                 .setTitle("ERROR")
-                .setMessage("Se ha producido un error autenticando al usuario")
+                .setMessage("Ha ocurrido un error no esperado.\nVuelve a intentarlo")
                 .setPositiveButton("Aceptar", null)
                 .create()
                 .show();
     }
 
     public void elegirLigas(String email) {
-        cargarFragment(new FragmentElegirLigasFavoritas(this, email, new ArrayList<>(), new ArrayList<>()));
+        cargarFragment(new FragmentElegirLigasFavoritas(this, email, new ArrayList<>(), new ArrayList<>(),true));
     }
 
     private void cargarFragment(Fragment f) {
@@ -168,7 +164,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         FT = null;
     }
 
-    public void irAMainActivity(String email, String urlFoto) {
+    public void irAMainActivity() {
 
         Intent mainActivity = new Intent(this, MainActivity.class);
         startActivityForResult(mainActivity, MAINACTIVITY_CODE);
@@ -176,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public void guardaSesion(String email, String urlFoto) {
         SharedPreferences prefs = getSharedPreferences("preferencias", MODE_PRIVATE);
+        prefs.edit().clear().apply();
         prefs.edit()
                 .putString("email", email)
                 .putString("foto", urlFoto)
@@ -190,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (email != null) {
             Log.e("SESION INICIADA", email);
             auth.setVisibility(View.GONE);
-            irAMainActivity(email, urlFoto);
+            irAMainActivity();
         }
     }
 
