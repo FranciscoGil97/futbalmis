@@ -58,16 +58,16 @@
                 android:text="Acceder" />
         </LinearLayout>
 
-<!--        <Button-->
-<!--            android:id="@+id/googleButton"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:backgroundTint="@color/white"-->
-<!--            android:drawableLeft="@drawable/googleg_standard_color_18"-->
-<!--            android:text="GOOGLE"-->
-<!--            android:textAlignment="textStart"-->
-<!--            android:textColor="@color/black" />-->
+        <Button
+            android:id="@+id/googleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/white"
+            android:drawableLeft="@drawable/googleg_standard_color_18"
+            android:text="GOOGLE"
+            android:textAlignment="textStart"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/invitadoButton"
