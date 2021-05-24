@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onBackPressed() {
         Fragment fragmentActual = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
 
-        if (!getSupportFragmentManager().getFragments().isEmpty())
+        if (getSupportFragmentManager().getFragments().size() >1)
             if (getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 2) instanceof FragmentLigas) {
                 swipeRefreshLayout.setEnabled(true);
                 tabs.setVisibility(View.VISIBLE);
